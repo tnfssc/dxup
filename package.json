@@ -1,0 +1,106 @@
+{
+  "name": "dxup",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun --bun x tsc && bun --bun x vite build",
+    "dev": "bun --bun x vite",
+    "format": "prettier --write .",
+    "lint": "bun --bun x eslint .",
+    "prepare": "bun --bun x panda codegen",
+    "preview": "bun --bun x vite preview",
+    "tauri": "bun --bun x tauri",
+    "typecheck": "bun --bun x tsc --noEmit"
+  },
+  "prettier": {
+    "bracketSpacing": true,
+    "importOrder": [
+      "^react/(.*)$",
+      "^~/(.*)$",
+      "^[./](.*)$"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true,
+    "plugins": [
+      "prettier-plugin-packagejson",
+      "prettier-plugin-organize-imports",
+      "@trivago/prettier-plugin-sort-imports"
+    ],
+    "printWidth": 120,
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "project": "./tsconfig.json",
+      "tsconfigRootDir": "."
+    },
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/strict-type-checked",
+      "plugin:@typescript-eslint/stylistic-type-checked",
+      "plugin:react/recommended",
+      "plugin:react/jsx-runtime",
+      "plugin:react-hooks/recommended",
+      "plugin:@tanstack/eslint-plugin-query/recommended",
+      "plugin:jsx-a11y/recommended",
+      "plugin:deprecation/recommended",
+      "eslint-config-prettier"
+    ],
+    "rules": {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-empty-interface": "off",
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "caughtErrorsIgnorePattern": "^_"
+        }
+      ],
+      "react/prop-types": "off"
+    },
+    "ignorePatterns": [
+      "**/*.config.*",
+      "styled-system"
+    ]
+  },
+  "devDependencies": {
+    "@ark-ui/react": "^3.5.0",
+    "@fontsource-variable/red-hat-display": "^5.0.21",
+    "@fontsource-variable/red-hat-mono": "^5.0.19",
+    "@fontsource-variable/red-hat-text": "^5.0.19",
+    "@park-ui/panda-preset": "^0.38.1",
+    "@tanstack/eslint-plugin-query": "^5.51.1",
+    "@tanstack/react-query": "^5.51.1",
+    "@tauri-apps/api": "^1.6.0",
+    "@tauri-apps/cli": "^1.6.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "8",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-deprecation": "^3.0.0",
+    "eslint-plugin-jsx-a11y": "^6.9.0",
+    "lucide-react": "^0.408.0",
+    "prettier-plugin-organize-imports": "^3.2.4",
+    "prettier-plugin-packagejson": "^2.5.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3",
+    "vite-tsconfig-paths": "^4.3.2"
+  }
+}

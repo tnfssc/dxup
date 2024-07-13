@@ -1,0 +1,44 @@
+{
+  "build": {
+    "beforeDevCommand": "bun run dev",
+    "beforeBuildCommand": "bun run build",
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist"
+  },
+  "package": {
+    "productName": "dxup",
+    "version": "0.0.1"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "execute": true,
+        "scope": [
+          {
+            "name": "asdf",
+            "cmd": "asdf",
+            "args": ["list"]
+          }
+        ]
+      }
+    },
+    "windows": [
+      {
+        "title": "dxup",
+        "width": 800,
+        "height": 600
+      }
+    ],
+    "security": {
+      "csp": null
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "org.dxup",
+      "icon": ["icons/dxup.png", "icons/icon.icns", "icons/icon.ico"]
+    }
+  }
+}
