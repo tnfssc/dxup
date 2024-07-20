@@ -12,6 +12,9 @@
   "tauri": {
     "allowlist": {
       "all": false,
+      "path": {
+        "all": true
+      },
       "shell": {
         "all": false,
         "execute": true,
@@ -19,7 +22,11 @@
           {
             "name": "asdf",
             "cmd": "asdf",
-            "args": ["list"]
+            "args": true
+          },
+          {
+            "name": "pwd",
+            "cmd": "pwd"
           }
         ]
       }
@@ -28,7 +35,8 @@
       {
         "title": "dxup",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "titleBarStyle": "Transparent"
       }
     ],
     "security": {
@@ -36,9 +44,9 @@
     },
     "bundle": {
       "active": true,
-      "targets": "all",
+      "targets": ["app", "deb", "rpm", "updater", "dmg"],
       "identifier": "org.dxup",
-      "icon": ["icons/dxup.png", "icons/icon.icns", "icons/icon.ico"]
+      "icon": ["icons/dxup.png", "icons/dxup.icns", "icons/dxup.ico"]
     }
   }
 }

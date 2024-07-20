@@ -1,7 +1,17 @@
-# Tauri + React + Typescript
+# [dxup](https://dxup.sharath.uk)
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+![Tauri](https://img.shields.io/badge/Tauri-v1-2bb9c7?style=for-the-badge&logo=tauri)
+![Park UI](https://img.shields.io/badge/Park%20UI-v1-000000?style=for-the-badge&logo=arkecosystem)
+![PandaCSS](https://img.shields.io/badge/PandaCSS-v0.43-ffffff?style=for-the-badge&logo=foodpanda)
+![TypeScript](https://img.shields.io/badge/TypeScript-v5-4476c0?style=for-the-badge&logo=typescript)
+![Bun](https://img.shields.io/badge/Bun-v1-f5f5f5?style=for-the-badge&logo=bun)
 
-## Recommended IDE Setup
+---
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## Instructions
+
+- You can start the dev build using the following command:
+
+```sh
+bun tauri dev
+```

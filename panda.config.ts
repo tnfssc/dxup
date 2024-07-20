@@ -29,9 +29,10 @@ export default defineConfig({
       },
       tokens: {
         fonts: {
-          body: { value: 'Red Hat Text Variable, system-ui, sans-serif' },
-          heading: { value: 'Red Hat Display Variable, system-ui, sans-serif' },
-          mono: { value: 'Red Hat Mono Variable, system-ui, monospace' },
+          body: { value: 'Red Hat Text, system-ui, sans-serif' },
+          heading: { value: 'Red Hat Display, system-ui, sans-serif' },
+          mono: { value: 'Red Hat Mono, system-ui, monospace' },
+          code: { value: 'Red Hat Mono, system-ui, monospace' },
         },
       },
     },

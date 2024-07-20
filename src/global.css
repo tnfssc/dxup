@@ -1,0 +1,34 @@
+@layer reset, base, tokens, recipes, utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+    font-family: var(--fonts-body);
+  }
+
+  code {
+    font-family: var(--fonts-mono);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  th {
+    font-family: var(--fonts-heading);
+  }
+}

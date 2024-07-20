@@ -32,4 +32,8 @@ export const Trigger = withContext<HTMLButtonElement, Assign<JsxStyleProps, Tool
   'trigger',
 );
 
-export { TooltipContext as Context, type TooltipContextProps as ContextProps } from '@ark-ui/react/tooltip';
+export {
+  TooltipContext as Context,
+  type TooltipContextProps as ContextProps,
+  type TooltipContentProps as ContentProps,
+} from '@ark-ui/react/tooltip';
