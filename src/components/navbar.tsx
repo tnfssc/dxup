@@ -14,7 +14,8 @@ export const navbarHeightInPx = 57;
 
 export const Navbar = () => {
   const toast = useToast();
-  const pwdQuery = useQuery(api.pwd());
+  const homeDir = useQuery(api.homeDir());
+  const pwdQuery = useQuery(api.pwd({ cwd: homeDir.data }));
   const project = pwdQuery.data?.at(-1) ?? 'Loading...';
   const pwd = pwdQuery.data ? friendlyPath(pwdQuery.data) : 'Loading...';
 

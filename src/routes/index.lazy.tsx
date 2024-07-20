@@ -38,7 +38,8 @@ const Row: React.FC<CurrentRuntime & { index: number }> = ({ name, version, tool
 };
 
 function Page() {
-  const asdfList = useQuery(api.asdf.runtime.current());
+  const homeDir = useQuery(api.homeDir());
+  const asdfList = useQuery(api.asdf.runtime.current(undefined, { cwd: homeDir.data }));
 
   return (
     <Table.Root>

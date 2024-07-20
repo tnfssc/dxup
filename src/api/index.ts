@@ -108,29 +108,34 @@ function parsePath(_input: string, homeDir?: string): string[] {
     .filter((part) => part !== '');
 }
 
+export interface CommandOptions {
+  cwd?: string;
+  env?: Record<string, string>;
+}
+
 export const api = {
   asdf: {
     runtime: {
-      list(toolName?: string) {
+      list(toolName?: string, options?: CommandOptions) {
         return {
-          queryKey: ['list', toolName],
+          queryKey: ['list', toolName, options],
           queryFn: async () => {
             const args = ['list'];
             if (toolName) args.push(toolName);
-            const command = new Command('asdf', args);
+            const command = new Command('asdf', args, options);
             const { stdout, code, stderr } = await command.execute();
             if (code !== 0) throw new CommandError(stderr, code);
             return parseRuntimesList(stdout, toolName);
           },
         } satisfies UseQueryOptions<Runtime[]>;
       },
-      current(toolName?: string) {
+      current(toolName?: string, options?: CommandOptions) {
         return {
-          queryKey: ['current', toolName],
+          queryKey: ['current', toolName, options],
           queryFn: async () => {
             const args = ['current'];
             if (toolName) args.push(toolName);
-            const command = new Command('asdf', args);
+            const command = new Command('asdf', args, options);
             const { stdout, code, stderr } = await command.execute();
             if (code !== 0) throw new CommandError(stderr, code);
             const homeDirectory = await queryClient.fetchQuery(api.homeDir());
@@ -138,25 +143,25 @@ export const api = {
           },
         } satisfies UseQueryOptions<CurrentRuntime[]>;
       },
-      reshim(toolName?: string, version?: string) {
+      reshim(toolName?: string, version?: string, options?: CommandOptions) {
         return {
-          mutationKey: ['reshim', toolName, version],
+          mutationKey: ['reshim', toolName, version, options],
           mutationFn: async () => {
             const args = ['reshim'];
             if (toolName) args.push(toolName);
             if (version) args.push(version);
-            const command = new Command('asdf', args);
+            const command = new Command('asdf', args, options);
             const { code, stderr } = await command.execute();
             if (code !== 0) throw new CommandError(stderr, code);
           },
         } satisfies UseMutationOptions<void>;
       },
-      global(toolName: string, version = 'latest') {
+      global(toolName: string, version = 'latest', options?: CommandOptions) {
         return {
-          mutationKey: ['global', toolName, version],
+          mutationKey: ['global', toolName, version, options],
           mutationFn: async () => {
             const args = ['global', toolName, version];
-            const command = new Command('asdf', args);
+            const command = new Command('asdf', args, options);
             const { code, stderr } = await command.execute();
             if (code !== 0) throw new CommandError(stderr, code);
           },
@@ -168,13 +173,13 @@ export const api = {
           },
         } satisfies UseMutationOptions<void>;
       },
-      where(toolName: string, version?: string) {
+      where(toolName: string, version?: string, options?: CommandOptions) {
         return {
-          queryKey: ['where', toolName, version],
+          queryKey: ['where', toolName, version, options],
           queryFn: async () => {
             const args = ['where', toolName];
             if (version) args.push(version);
-            const command = new Command('asdf', args);
+            const command = new Command('asdf', args, options);
             const { code, stderr, stdout } = await command.execute();
             if (code !== 0) throw new CommandError(stderr, code);
             const homeDirectory = await queryClient.fetchQuery(api.homeDir());
@@ -182,12 +187,12 @@ export const api = {
           },
         } satisfies UseQueryOptions<string[]>;
       },
-      which(toolName: string) {
+      which(toolName: string, options?: CommandOptions) {
         return {
-          queryKey: ['which', toolName],
+          queryKey: ['which', toolName, options],
           queryFn: async () => {
             const args = ['which', toolName];
-            const command = new Command('asdf', args);
+            const command = new Command('asdf', args, options);
             const { code, stderr, stdout } = await command.execute();
             if (code !== 0) throw new CommandError(stderr, code);
             const homeDirectory = await queryClient.fetchQuery(api.homeDir());
@@ -197,24 +202,24 @@ export const api = {
       },
     },
     plugin: {
-      list() {
+      list(options?: CommandOptions) {
         return {
-          queryKey: ['plugin', 'list'],
+          queryKey: ['plugin', 'list', options],
           queryFn: async () => {
             const args = ['plugin', 'list', '--urls'];
-            const command = new Command('asdf', args);
+            const command = new Command('asdf', args, options);
             const { stdout, code, stderr } = await command.execute();
             if (code !== 0) throw new CommandError(stderr, code);
             return parsePluginList(stdout, true);
           },
         } satisfies UseQueryOptions<Plugin[]>;
       },
-      listAll() {
+      listAll(options?: CommandOptions) {
         return {
-          queryKey: ['plugin', 'list', 'all'],
+          queryKey: ['plugin', 'list', 'all', options],
           queryFn: async () => {
             const args = ['plugin', 'list', 'all'];
-            const command = new Command('asdf', args);
+            const command = new Command('asdf', args, options);
             const { stdout, code, stderr } = await command.execute();
             if (code !== 0) throw new CommandError(stderr, code);
             return parsePluginList(stdout);
@@ -223,11 +228,11 @@ export const api = {
       },
     },
   },
-  pwd() {
+  pwd(options?: CommandOptions) {
     return {
-      queryKey: ['pwd'],
+      queryKey: ['pwd', options],
       queryFn: async () => {
-        const command = new Command('pwd');
+        const command = new Command('pwd', '', options);
         const { stdout, code, stderr } = await command.execute();
         if (code !== 0) throw new CommandError(stderr, code);
         const homeDirectory = await queryClient.fetchQuery(api.homeDir());
