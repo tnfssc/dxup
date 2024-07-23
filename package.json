@@ -80,7 +80,9 @@
     },
     "ignorePatterns": [
       "**/*.config.*",
-      "styled-system"
+      "styled-system",
+      "dist",
+      "src-tauri/target"
     ]
   },
   "devDependencies": {
@@ -89,9 +91,11 @@
     "@fontsource/red-hat-mono": "^5.0.18",
     "@fontsource/red-hat-text": "^5.0.18",
     "@nanostores/react": "^0.7.2",
-    "@park-ui/panda-preset": "^0.38.1",
+    "@pandacss/dev": "^0.44.0",
+    "@park-ui/panda-preset": "^0.39.0",
     "@tanstack/eslint-plugin-query": "^5.51.1",
     "@tanstack/react-query": "^5.51.1",
+    "@tanstack/react-query-devtools": "^5.51.11",
     "@tanstack/router-devtools": "^1.45.1",
     "@tanstack/router-plugin": "^1.45.0",
     "@tauri-apps/api": "^1.6.0",
@@ -106,6 +110,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-deprecation": "^3.0.0",
     "eslint-plugin-jsx-a11y": "^6.9.0",
+    "immer": "^10.1.1",
     "lucide-react": "^0.408.0",
     "nanostores": "^0.10.3",
     "prettier-plugin-organize-imports": "^3.2.4",

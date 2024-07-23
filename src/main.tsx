@@ -15,6 +15,16 @@ declare module '@tanstack/react-router' {
   }
 }
 
+declare global {
+  // eslint-disable-next-line no-var
+  function wait(time: number): Promise<void>;
+  interface Window {
+    wait: typeof wait;
+  }
+}
+
+globalThis.wait = (time: number) => new Promise((resolve) => setTimeout(resolve, time));
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Providers>

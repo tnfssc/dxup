@@ -1,9 +1,12 @@
+import { useStore } from '@nanostores/react';
 import { useQuery } from '@tanstack/react-query';
+import { useMatch, useRouter } from '@tanstack/react-router';
 import { ChevronRightIcon } from 'lucide-react';
 import { css } from 'styled-system/css';
 
-import { api } from '~/api';
+import { cli } from '~/api';
 import { useToast } from '~/hooks/toaster';
+import { $project } from '~/stores/project';
 import { Button } from '~/ui/button';
 import { EasyTooltip } from '~/ui/easy-tooltip';
 import { friendlyPath } from '~/utils';
@@ -13,10 +16,12 @@ import { NavDrawer } from './drawer';
 export const navbarHeightInPx = 57;
 
 export const Navbar = () => {
+  const match = useMatch({ from: '/$tool', shouldThrow: false });
+  const router = useRouter();
   const toast = useToast();
-  const homeDir = useQuery(api.homeDir());
-  const pwdQuery = useQuery(api.pwd({ cwd: homeDir.data }));
-  const project = pwdQuery.data?.at(-1) ?? 'Loading...';
+  const project = useStore($project);
+  const pwdQuery = useQuery(cli.pwd({ cwd: project }));
+  const projectName = pwdQuery.data?.at(-1) ?? 'Loading...';
   const pwd = pwdQuery.data ? friendlyPath(pwdQuery.data) : 'Loading...';
 
   return (
@@ -35,14 +40,21 @@ export const Navbar = () => {
       })}
       style={{ height: navbarHeightInPx }}
     >
-      <span className="rounded-full">
+      <button
+        className={css({ cursor: 'pointer', rounded: 'full' })}
+        aria-label="Go to home page"
+        onClick={() => {
+          void router.navigate({ to: '/' });
+        }}
+      >
         <img src="/icon.svg" alt="dxup logo" height={32} width={32} />
-      </span>
+      </button>
       <EasyTooltip tooltip={pwd}>
-        <span>{project}</span>
+        <span>{projectName}</span>
+        {match?.params.tool && <span> / {match.params.tool}</span>}
       </EasyTooltip>
       <NavDrawer
-        title={project}
+        title={projectName}
         subtitle={pwd}
         footerContent={
           <Button onMouseDown={() => toast.error({ title: 'Not implemented yet' })} variant="outline">

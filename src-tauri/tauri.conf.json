@@ -18,6 +18,7 @@
       "shell": {
         "all": false,
         "execute": true,
+        "open": true,
         "scope": [
           {
             "name": "asdf",

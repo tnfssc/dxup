@@ -12,6 +12,11 @@ export interface ProgressProps extends Assign<JsxStyleProps, ProgressRootProps>,
    * @default linear
    */
   type?: 'linear' | 'circular';
+  /**
+   * Should the text be shown?
+   * @default false
+   */
+  text?: boolean;
 }
 
 export const Progress = forwardRef<HTMLDivElement, ProgressProps>((props, ref) => {
@@ -35,7 +40,7 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>((props, ref) =
           <ArkProgress.ValueText className={styles.valueText} />
         </ArkProgress.Circle>
       )}
-      <ArkProgress.ValueText className={styles.valueText} />
+      {!!props.text && <ArkProgress.ValueText className={styles.valueText} />}
     </ArkProgress.Root>
   );
 });
