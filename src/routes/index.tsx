@@ -1,6 +1,6 @@
 import { useStore } from '@nanostores/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link, createFileRoute } from '@tanstack/react-router';
+import { Link, createFileRoute, useRouter } from '@tanstack/react-router';
 import { open } from '@tauri-apps/api/shell';
 import {
   CheckIcon,
@@ -11,7 +11,7 @@ import {
   PlusIcon,
   SettingsIcon,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { css } from 'styled-system/css';
 import { Center, HStack, VStack } from 'styled-system/jsx';
 import { center, vstack } from 'styled-system/patterns';
@@ -21,7 +21,6 @@ import { RouteError } from '~/components/route-error';
 import { RoutePending } from '~/components/route-pending';
 import { useDebounce } from '~/hooks/debounce';
 import { useToast } from '~/hooks/toaster';
-import { queryClient } from '~/lib/query-client';
 import { $project } from '~/stores/project';
 import { Code } from '~/ui/code';
 import { EasyTooltip } from '~/ui/easy-tooltip';
@@ -31,10 +30,6 @@ import * as Select from '~/ui/select';
 
 export const Route = createFileRoute('/')({
   component: Page,
-  loader: async () => {
-    if (!$project.value) return;
-    await queryClient.ensureQueryData(cli.asdf.plugin.list({ cwd: $project.value }));
-  },
   errorComponent: RouteError,
   pendingComponent: RoutePending,
 });
@@ -45,6 +40,14 @@ const Row: React.FC<Plugin & { index: number }> = ({ name, url }) => {
   const versionsQuery = useQuery(cli.asdf.runtime.list(name, { cwd: project }));
   const versions = versionsQuery.data?.[0]?.versions;
   const currentQuery = useQuery(cli.asdf.runtime.current(name, { cwd: project }));
+  const router = useRouter();
+
+  useEffect(() => {
+    if (versionsQuery.isPending) return;
+    if (versionsQuery.isError) {
+      void router.navigate({ to: '/doctor' });
+    }
+  }, [versionsQuery.isError, versionsQuery.isPending, router]);
 
   return (
     <li className={center({ _hover: { bg: 'bg.emphasized' }, w: 'md', rounded: 'md', p: '4' })}>

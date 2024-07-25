@@ -1,18 +1,22 @@
 import { useStore } from '@nanostores/react';
 import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Outlet, createRootRoute } from '@tanstack/react-router';
+import { Outlet, createRootRoute, useRouter } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { useEffect } from 'react';
 import { css } from 'styled-system/css';
 
 import { cli } from '~/api';
 import { Navbar, navbarHeightInPx } from '~/components/navbar';
+import { RouteError } from '~/components/route-error';
+import { RoutePending } from '~/components/route-pending';
 import { $project } from '~/stores/project';
 
 const Root = () => {
   const project = useStore($project);
   const homeDir = useQuery(cli.homeDir());
+  const asdfHelp = useQuery(cli.asdf.runtime.help());
+  const router = useRouter();
 
   useEffect(() => {
     if (project) return;
@@ -20,7 +24,14 @@ const Root = () => {
     $project.set(homeDir.data);
   }, [homeDir.data, project]);
 
-  if (!project) return null;
+  useEffect(() => {
+    if (asdfHelp.isPending) return;
+    if (asdfHelp.isError) {
+      void router.navigate({ to: '/doctor' });
+    }
+  }, [asdfHelp.isError, asdfHelp.isPending, router]);
+
+  if (!project && !asdfHelp.isPending) return null;
 
   return (
     <div
@@ -43,4 +54,6 @@ const Root = () => {
 
 export const Route = createRootRoute({
   component: Root,
+  errorComponent: RouteError,
+  pendingComponent: RoutePending,
 });

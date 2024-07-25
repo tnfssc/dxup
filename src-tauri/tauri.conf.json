@@ -15,6 +15,13 @@
       "path": {
         "all": true
       },
+      "fs": {
+        "all": false,
+        "readFile": true,
+        "writeFile": true,
+        "exists": true,
+        "scope": ["$HOME/.profile"]
+      },
       "shell": {
         "all": false,
         "execute": true,
@@ -28,6 +35,16 @@
           {
             "name": "pwd",
             "cmd": "pwd"
+          },
+          {
+            "name": "git",
+            "cmd": "git",
+            "args": true
+          },
+          {
+            "name": "curl",
+            "cmd": "curl",
+            "args": ["--help"]
           }
         ]
       }

@@ -1,7 +1,7 @@
 import { useStore } from '@nanostores/react';
 import { useQuery } from '@tanstack/react-query';
-import { useMatch, useRouter } from '@tanstack/react-router';
-import { ChevronRightIcon } from 'lucide-react';
+import { Link, useMatch, useRouter } from '@tanstack/react-router';
+import { ChevronRightIcon, HeartPulseIcon, PlayCircleIcon } from 'lucide-react';
 import { css } from 'styled-system/css';
 
 import { cli } from '~/api';
@@ -9,6 +9,7 @@ import { useToast } from '~/hooks/toaster';
 import { $project } from '~/stores/project';
 import { Button } from '~/ui/button';
 import { EasyTooltip } from '~/ui/easy-tooltip';
+import { IconButton } from '~/ui/icon-button';
 import { friendlyPath } from '~/utils';
 
 import { NavDrawer } from './drawer';
@@ -57,13 +58,31 @@ export const Navbar = () => {
         title={projectName}
         subtitle={pwd}
         footerContent={
-          <Button onMouseDown={() => toast.error({ title: 'Not implemented yet' })} variant="outline">
-            Open project
-            <ChevronRightIcon />
-          </Button>
+          <>
+            {import.meta.env.DEV && (
+              <Link to="/playground">
+                <EasyTooltip tooltip="Playground">
+                  <IconButton variant="outline">
+                    <PlayCircleIcon />
+                  </IconButton>
+                </EasyTooltip>
+              </Link>
+            )}
+            <Link to="/doctor">
+              <EasyTooltip tooltip="Doctor">
+                <IconButton variant="outline">
+                  <HeartPulseIcon />
+                </IconButton>
+              </EasyTooltip>
+            </Link>
+            <Button onMouseDown={() => toast.error({ title: 'Not implemented yet' })} variant="outline">
+              Open project
+              <ChevronRightIcon />
+            </Button>
+          </>
         }
       >
-        TODO
+        <></>
       </NavDrawer>
     </div>
   );

@@ -11,7 +11,9 @@ export function createQueryClient(toast: ReturnType<typeof useToast>) {
         onError(error, variables, context) {
           console.error({ variables, context });
           console.error(error);
-          toast.error({ title: 'Error', description: error.message.slice(-100) || 'Something went wrong!' });
+          if (error.message)
+            toast.error({ title: 'Error', description: error.message.slice(-100) || 'Something went wrong!' });
+          else toast.error({ title: 'Error', description: 'Something went wrong!' });
         },
       },
     },

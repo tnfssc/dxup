@@ -1,5 +1,6 @@
 /* eslint-disable @tanstack/query/exhaustive-deps */
 import { type UseMutationOptions, queryOptions } from '@tanstack/react-query';
+import { BaseDirectory, exists, readTextFile, writeTextFile } from '@tauri-apps/api/fs';
 import { homeDir } from '@tauri-apps/api/path';
 import { Command } from '@tauri-apps/api/shell';
 
@@ -122,9 +123,25 @@ export interface CommandOptions {
   env?: Record<string, string>;
 }
 
+export const asdfProfileConfig = (homeDir?: string) =>
+  `export HOME="${homeDir ?? '/home/$USER'}"\nexport ASDF_DIR="$HOME/.asdf"\n. "$HOME/.asdf/asdf.sh"`;
+
 export const cli = {
   asdf: {
     runtime: {
+      help(options?: CommandOptions) {
+        return queryOptions<string, CommandError>({
+          queryKey: ['help', options].filter((v) => !!v),
+          queryFn: async () => {
+            const args = ['--help'];
+            const command = new Command('asdf', args, options);
+            const { stdout, code, stderr } = await command.execute();
+            if (code !== 0) throw new CommandError(stderr, code);
+            return stdout;
+          },
+          retry: false,
+        });
+      },
       list(toolName?: string, options?: CommandOptions) {
         return queryOptions<Runtime[], CommandError>({
           queryKey: ['list', toolName, options].filter((v) => !!v),
@@ -412,5 +429,80 @@ export const cli = {
         return await homeDir();
       },
     });
+  },
+  git: {
+    help(options?: CommandOptions) {
+      return queryOptions<string, CommandError>({
+        queryKey: ['git', 'help', options].filter((v) => !!v),
+        queryFn: async () => {
+          const args = ['--help'];
+          const command = new Command('git', args, options);
+          const { stdout, code, stderr } = await command.execute();
+          if (code !== 0) throw new CommandError(stderr, code);
+          return stdout;
+        },
+      });
+    },
+  },
+  curl: {
+    help(options?: CommandOptions) {
+      return queryOptions<string, CommandError>({
+        queryKey: ['curl', 'help', options].filter((v) => !!v),
+        queryFn: async () => {
+          const args = ['--help'];
+          const command = new Command('curl', args, options);
+          const { stdout, code, stderr } = await command.execute();
+          if (code !== 0) throw new CommandError(stderr, code);
+          return stdout;
+        },
+      });
+    },
+  },
+  downloadAsdf() {
+    return {
+      mutationKey: ['downloadAsdf'].filter((v) => !!v),
+      mutationFn: async () => {
+        const homeDir = await queryClient.fetchQuery(cli.homeDir());
+        const args = ['clone', 'https://github.com/asdf-vm/asdf.git', `${homeDir}/.asdf`, '--branch', 'v0.14.0'];
+        const command = new Command('git', args);
+        const { code, stderr } = await command.execute();
+        if (code !== 0) throw new CommandError(stderr, code);
+      },
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.invalidateQueries(cli.asdf.runtime.help()),
+          queryClient.invalidateQueries(cli.asdf.runtime.list()),
+          queryClient.invalidateQueries(cli.asdf.runtime.current()),
+        ]);
+      },
+    } satisfies UseMutationOptions<void, CommandError>;
+  },
+  addAsdfToProfile() {
+    return {
+      mutationKey: ['addAsdfToProfile'].filter((v) => !!v),
+      mutationFn: async () => {
+        const homeDirectory = await queryClient.fetchQuery(cli.homeDir());
+        const profileFileName = '.profile';
+        const profileExists = await exists(profileFileName, { dir: BaseDirectory.Home });
+        let profileData = '';
+        if (profileExists)
+          profileData = await readTextFile(profileFileName, { dir: BaseDirectory.Home }).catch(() => '');
+        profileData = profileData.replace(/\n\n# DXUP_CONFIG_START[\s\S]*# DXUP_CONFIG_END\n/g, '');
+        const newProfileData =
+          profileData + '\n\n# DXUP_CONFIG_START\n' + asdfProfileConfig(homeDirectory) + '\n# DXUP_CONFIG_END\n';
+        const error = await writeTextFile(profileFileName, newProfileData, { dir: BaseDirectory.Home }).catch(
+          (e: unknown) => e,
+        );
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-base-to-string
+        if (error) throw new CommandError(`Failed to write to profile file ${error}`, 1);
+      },
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.invalidateQueries(cli.asdf.runtime.help()),
+          queryClient.invalidateQueries(cli.asdf.runtime.list()),
+          queryClient.invalidateQueries(cli.asdf.runtime.current()),
+        ]);
+      },
+    } satisfies UseMutationOptions<void, CommandError>;
   },
 };
