@@ -123,8 +123,7 @@ export interface CommandOptions {
   env?: Record<string, string>;
 }
 
-export const asdfProfileConfig = (homeDir?: string) =>
-  `export HOME="${homeDir ?? '/home/$USER'}"\nexport ASDF_DIR="$HOME/.asdf"\n. "$HOME/.asdf/asdf.sh"`;
+export const asdfProfileConfig = () => `export ASDF_DIR="$HOME/.asdf"\n. "$HOME/.asdf/asdf.sh"`;
 
 export const cli = {
   asdf: {
@@ -481,7 +480,6 @@ export const cli = {
     return {
       mutationKey: ['addAsdfToProfile'].filter((v) => !!v),
       mutationFn: async () => {
-        const homeDirectory = await queryClient.fetchQuery(cli.homeDir());
         const profileFileName = '.profile';
         const profileExists = await exists(profileFileName, { dir: BaseDirectory.Home });
         let profileData = '';
@@ -489,7 +487,7 @@ export const cli = {
           profileData = await readTextFile(profileFileName, { dir: BaseDirectory.Home }).catch(() => '');
         profileData = profileData.replace(/\n\n# DXUP_CONFIG_START[\s\S]*# DXUP_CONFIG_END\n/g, '');
         const newProfileData =
-          profileData + '\n\n# DXUP_CONFIG_START\n' + asdfProfileConfig(homeDirectory) + '\n# DXUP_CONFIG_END\n';
+          profileData + '\n\n# DXUP_CONFIG_START\n' + asdfProfileConfig() + '\n# DXUP_CONFIG_END\n';
         const error = await writeTextFile(profileFileName, newProfileData, { dir: BaseDirectory.Home }).catch(
           (e: unknown) => e,
         );

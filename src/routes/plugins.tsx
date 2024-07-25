@@ -12,7 +12,6 @@ import { RouteError } from '~/components/route-error';
 import { RoutePending } from '~/components/route-pending';
 import { useDebounce } from '~/hooks/debounce';
 import { useToast } from '~/hooks/toaster';
-import { queryClient } from '~/lib/query-client';
 import { $project } from '~/stores/project';
 import { Badge } from '~/ui/badge';
 import { Code } from '~/ui/code';
@@ -21,11 +20,6 @@ import { IconButton } from '~/ui/icon-button';
 import { Input } from '~/ui/input';
 
 export const Route = createFileRoute('/plugins')({
-  loader: async () => {
-    if (!$project.value) return;
-    await queryClient.ensureQueryData(cli.asdf.plugin.list({ cwd: $project.value }));
-    await queryClient.ensureQueryData(cli.asdf.plugin.listAll({ cwd: $project.value }));
-  },
   component: Page,
   pendingComponent: RoutePending,
   errorComponent: RouteError,
@@ -105,6 +99,8 @@ const Row: React.FC<Plugin & { index: number }> = ({ name, url, installed }) => 
   );
 };
 
+const topPlugins = ['nodejs', 'python', 'golang', 'rust', 'java'];
+
 function Page() {
   const project = useStore($project);
 
@@ -120,6 +116,8 @@ function Page() {
       .sort((a, b) => {
         if (a.installed && !b.installed) return -1;
         if (!a.installed && b.installed) return 1;
+        if (topPlugins.includes(a.name) && !topPlugins.includes(b.name)) return -1;
+        if (!topPlugins.includes(a.name) && topPlugins.includes(b.name)) return 1;
         return 0;
       });
   }, [allPluginsQuery.data, debouncedSearch]);
@@ -130,7 +128,7 @@ function Page() {
         <HStack p="4" w="md" justify="space-between">
           <Input maxW="48" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
           <HStack gap="2">
-            <EasyTooltip tooltip="Update all plugins">
+            <EasyTooltip tooltip="Refresh">
               <IconButton
                 disabled={allPluginsQuery.isPending}
                 variant="outline"

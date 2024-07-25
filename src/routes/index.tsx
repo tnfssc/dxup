@@ -9,6 +9,7 @@ import {
   LaptopMinimalIcon,
   LoaderCircleIcon,
   PlusIcon,
+  RotateCcwIcon,
   SettingsIcon,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -21,12 +22,15 @@ import { RouteError } from '~/components/route-error';
 import { RoutePending } from '~/components/route-pending';
 import { useDebounce } from '~/hooks/debounce';
 import { useToast } from '~/hooks/toaster';
+import { queryClient } from '~/lib/query-client';
 import { $project } from '~/stores/project';
+import { Button } from '~/ui/button';
 import { Code } from '~/ui/code';
 import { EasyTooltip } from '~/ui/easy-tooltip';
 import { IconButton } from '~/ui/icon-button';
 import { Input } from '~/ui/input';
 import * as Select from '~/ui/select';
+import { Text } from '~/ui/text';
 
 export const Route = createFileRoute('/')({
   component: Page,
@@ -183,10 +187,37 @@ function Page() {
                 </IconButton>
               </EasyTooltip>
             </Link>
+            <EasyTooltip tooltip="Refresh">
+              <IconButton
+                disabled={asdfPluginList.isFetching}
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  void queryClient.invalidateQueries(cli.asdf.plugin.list());
+                  toast.success({ title: 'Refreshed' });
+                }}
+              >
+                {asdfPluginList.isFetching ? (
+                  <LoaderCircleIcon className={css({ animation: 'spin' })} />
+                ) : (
+                  <RotateCcwIcon />
+                )}
+              </IconButton>
+            </EasyTooltip>
           </HStack>
         </HStack>
       </Center>
       <ul className={vstack()}>
+        {plugins?.length === 0 && (
+          <li className={center({ _hover: { bg: 'bg.emphasized' }, w: 'md', rounded: 'md', p: '4' })}>
+            <VStack gap="2">
+              <Text>No plugins found</Text>
+              <Link to="/plugins">
+                <Button size="sm">Add plugin</Button>
+              </Link>
+            </VStack>
+          </li>
+        )}
         {plugins?.map((plugin, index) => <Row key={plugin.name} {...plugin} index={index} />)}
       </ul>
     </div>

@@ -1,7 +1,7 @@
 import { useStore } from '@nanostores/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useParams } from '@tanstack/react-router';
-import { CheckIcon, DownloadIcon, LaptopMinimalIcon, LoaderCircleIcon, TrashIcon } from 'lucide-react';
+import { CheckIcon, DownloadIcon, LaptopMinimalIcon, LoaderCircleIcon, RotateCcwIcon, TrashIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { css } from 'styled-system/css';
 import { Center, HStack, VStack } from 'styled-system/jsx';
@@ -132,6 +132,7 @@ const Row: React.FC<Runtime['versions'][0] & { installed: boolean; index: number
 
 function Page() {
   const { tool } = useParams({ from: '/$tool' });
+  const toast = useToast();
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 500);
   const project = useStore($project);
@@ -185,6 +186,23 @@ function Page() {
                   <LoaderCircleIcon className={css({ animation: 'spin' })} />
                 ) : (
                   <LaptopMinimalIcon />
+                )}
+              </IconButton>
+            </EasyTooltip>
+            <EasyTooltip tooltip="Refresh">
+              <IconButton
+                disabled={allVersionsQuery.isFetching}
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  void allVersionsQuery.refetch();
+                  toast.success({ title: 'Refreshed' });
+                }}
+              >
+                {allVersionsQuery.isFetching ? (
+                  <LoaderCircleIcon className={css({ animation: 'spin' })} />
+                ) : (
+                  <RotateCcwIcon />
                 )}
               </IconButton>
             </EasyTooltip>

@@ -18,7 +18,6 @@ export const Route = createFileRoute('/doctor')({
 
 function Page() {
   const toast = useToast();
-  const homeDir = useQuery(cli.homeDir());
   const asdfQuery = useQuery(cli.asdf.runtime.help());
   const gitQuery = useQuery(cli.git.help());
   const curlQuery = useQuery(cli.curl.help());
@@ -166,13 +165,15 @@ function Page() {
                       <Code>git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0</Code>
                     </VStack>
                     <Text>
-                      Add the following lines to your <Code>.profile</Code>
+                      Add the following lines to your <Code>~/.profile</Code>
                     </Text>
                     <VStack alignItems="start" gap="2">
-                      <Code whiteSpace="pre">{asdfProfileConfig(homeDir.data)}</Code>
+                      <Code whiteSpace="pre">{asdfProfileConfig()}</Code>
                     </VStack>
+                    <Text>Restart your computer for the changes to take effect</Text>
                     <Button
                       mt="4"
+                      disabled={gitQuery.isError || curlQuery.isError}
                       variant="outline"
                       onMouseDown={() => {
                         toast.promise(installAsdf.mutateAsync(), {
@@ -181,7 +182,8 @@ function Page() {
                           },
                           success: {
                             title: 'Installed',
-                            description: 'You may need to restart the app for the changes to take effect',
+                            description: 'Restart your computer for the changes to take effect',
+                            duration: 1_000_000,
                           },
                           error: {
                             title: 'Failed to install',
