@@ -16,7 +16,7 @@ jobs:
         include:
           - platform: 'macos-latest'
             args: '--target aarch64-apple-darwin'
-            artifact_name: 'macos/dxup_0.0.1_aarch64.dmg'
+            artifact_name: 'dmg/dxup_0.0.1_aarch64.dmg'
             asset_name: 'dxup-macos-aarch64.dmg'
           - platform: 'ubuntu-20.04'
             args: ''
@@ -29,7 +29,7 @@ jobs:
 
       - name: Cache asdf
         id: cache-asdf
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-asdf
         with:
@@ -42,7 +42,7 @@ jobs:
 
       - name: Cache node modules
         id: cache-bun
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-node-modules
         with:
