@@ -8,8 +8,9 @@ const runBuildCommand = () => {
     const output = data.toString();
     process.stdout.write(output);
 
+    // match for `Finished 1 bundle at:` or `Finished 2 bundles at:`
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    if (output.includes('bundles at:')) {
+    if (/Finished \d+ bundles? at:/.test(output)) {
       console.log('Build process finished. Exiting...');
       buildProcess.kill();
       process.exit(0);
