@@ -12,10 +12,6 @@
   "tauri": {
     "allowlist": {
       "all": false,
-      "process": {
-        "all": false,
-        "relaunch": true
-      },
       "path": {
         "all": true
       },

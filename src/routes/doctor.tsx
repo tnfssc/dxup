@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { relaunch } from '@tauri-apps/api/process';
 import { CheckIcon, ChevronDownIcon, RefreshCcwIcon, XIcon } from 'lucide-react';
 import { css } from 'styled-system/css';
 import { Box, Center, HStack, VStack } from 'styled-system/jsx';
@@ -29,7 +28,6 @@ function Page() {
     mutationFn: async () => {
       await downloadAsdfMutation.mutateAsync();
       await addAsdfToProfileMutation.mutateAsync();
-      await relaunch();
     },
   });
 
