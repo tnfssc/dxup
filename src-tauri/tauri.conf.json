@@ -66,7 +66,7 @@
     },
     "bundle": {
       "active": true,
-      "targets": ["app", "deb", "rpm", "updater", "dmg"],
+      "targets": ["app", "deb", "updater", "dmg"],
       "identifier": "org.dxup",
       "icon": ["icons/dxup.png", "icons/dxup.icns", "icons/dxup.ico"]
     }

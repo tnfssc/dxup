@@ -25,6 +25,6 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src", "styled-system"],
+  "include": ["src", "styled-system", "scripts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
