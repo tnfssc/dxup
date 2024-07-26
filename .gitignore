@@ -25,3 +25,4 @@ dist-ssr
 
 styled-system
 src-tauri/target
+src/routeTree.gen.ts
