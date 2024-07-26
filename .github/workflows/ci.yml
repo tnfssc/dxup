@@ -1,0 +1,56 @@
+name: 'CI'
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  lint:
+    runs-on: 'ubuntu-20.04'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache asdf
+        id: cache-asdf
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-asdf
+        with:
+          path: ~/.asdf
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Cache node modules
+        id: cache-bun
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.bun
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install asdf & tools
+        uses: asdf-vm/actions/install@v3
+
+      - name: Install frontend dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Format check
+        run: bun run format:check
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Build
+        run: bun run build
