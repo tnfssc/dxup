@@ -3,7 +3,7 @@ import { createPreset } from '@park-ui/panda-preset';
 
 export default defineConfig({
   preflight: true,
-  presets: ['@pandacss/preset-base', createPreset({ additionalColors: ['*'] })],
+  presets: ['@pandacss/preset-base', createPreset({ additionalColors: ['red'] })],
   include: ['./**/*.{ts,tsx}'],
   exclude: ['node_modules', '.next', '**/*.test.*', '**/*.spec.*', '**/*.e2e.*', '**/*.config.*'],
   jsxFramework: 'react',
