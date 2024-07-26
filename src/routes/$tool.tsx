@@ -1,10 +1,11 @@
 import { useStore } from '@nanostores/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useParams } from '@tanstack/react-router';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { CheckIcon, DownloadIcon, LaptopMinimalIcon, LoaderCircleIcon, RotateCcwIcon, TrashIcon } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Fragment, forwardRef, useMemo, useRef, useState } from 'react';
 import { css } from 'styled-system/css';
-import { Center, HStack, VStack } from 'styled-system/jsx';
+import { Box, Center, HStack, VStack } from 'styled-system/jsx';
 import { center, vstack } from 'styled-system/patterns';
 
 import { type Runtime, cli } from '~/api';
@@ -31,7 +32,10 @@ export const Route = createFileRoute('/$tool')({
   errorComponent: RouteError,
 });
 
-const Row: React.FC<Runtime['versions'][0] & { installed: boolean; index: number; toolName: string }> = (v) => {
+const Row = forwardRef<
+  HTMLLIElement,
+  Runtime['versions'][0] & { installed: boolean; index: number; toolName: string; start: number }
+>((v, ref) => {
   const project = useStore($project);
   const toast = useToast();
   const installMutation = useMutation(cli.asdf.runtime.install());
@@ -39,7 +43,22 @@ const Row: React.FC<Runtime['versions'][0] & { installed: boolean; index: number
   const changeVersionMutation = useMutation(cli.asdf.runtime.global());
 
   return (
-    <li className={center({ _hover: { bg: 'bg.emphasized' }, w: 'md', rounded: 'md', p: '4' })}>
+    <li
+      ref={ref}
+      data-index={v.index}
+      style={{
+        transform: `translateY(${v.start}px)`,
+      }}
+      className={center({
+        _hover: { bg: 'bg.emphasized' },
+        w: 'md',
+        rounded: 'md',
+        p: '4',
+        position: 'absolute',
+        top: '0',
+        left: '0',
+      })}
+    >
       <HStack w="full" justify="space-between">
         <VStack gap="2" alignItems="start">
           <Code>{v.version}</Code>
@@ -56,7 +75,11 @@ const Row: React.FC<Runtime['versions'][0] & { installed: boolean; index: number
                 variant="ghost"
                 size="sm"
                 onClick={() =>
-                  changeVersionMutation.mutate({ toolName: v.toolName, version: v.version, options: { cwd: project } })
+                  changeVersionMutation.mutate({
+                    toolName: v.toolName,
+                    version: v.version,
+                    options: { cwd: project },
+                  })
                 }
               >
                 {changeVersionMutation.isPending ? (
@@ -128,7 +151,9 @@ const Row: React.FC<Runtime['versions'][0] & { installed: boolean; index: number
       </HStack>
     </li>
   );
-};
+});
+
+Row.displayName = 'Row';
 
 function Page() {
   const { tool } = useParams({ from: '/$tool' });
@@ -163,8 +188,16 @@ function Page() {
       });
   }, [allVersions, current?.version, installedVersions, debouncedSearch]);
 
+  const parentRef = useRef<HTMLDivElement>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: versions?.length ?? 100,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 100,
+    overscan: 10,
+  });
+
   return (
-    <div>
+    <Box>
       <Center>
         <HStack p="4" w="md" justify="space-between" alignItems="center">
           <Input maxW="48" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
@@ -209,9 +242,29 @@ function Page() {
           </HStack>
         </HStack>
       </Center>
-      <ul className={vstack()}>
-        {versions?.map((v, index) => <Row key={v.version} {...v} index={index} toolName={tool} />)}
-      </ul>
-    </div>
+      <Center>
+        <Box css={{ maxH: 'md', w: 'md', overflow: 'auto' }} ref={parentRef}>
+          <ul
+            className={vstack({ position: 'relative', w: 'full' })}
+            style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+              const v = versions?.[virtualItem.index];
+              if (!v) return <Fragment key={virtualItem.key} />;
+              return (
+                <Row
+                  {...v}
+                  toolName={tool}
+                  index={virtualItem.index}
+                  key={virtualItem.key}
+                  ref={virtualItem.measureElement}
+                  start={virtualItem.start}
+                />
+              );
+            })}
+          </ul>
+        </Box>
+      </Center>
+    </Box>
   );
 }
