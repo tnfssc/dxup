@@ -11,7 +11,7 @@ import { Button } from '~/ui/button';
 import { Code } from '~/ui/code';
 import { Text } from '~/ui/text';
 
-export const Route = createFileRoute('/doctor')({
+export const Route = createFileRoute('/tools/_layout/doctor')({
   component: Page,
 });
 
@@ -36,7 +36,7 @@ function Page() {
   const isFetching = asdfQuery.isFetching || gitQuery.isFetching || curlQuery.isFetching;
 
   return (
-    <Center flexDir="column" gap="4" p="4">
+    <Center flexDir="column" gap="4" p="4" mt="8">
       <HStack py="4" px="4" w="full" justify="space-between" alignItems="center">
         <Text>{isFetching ? 'Loading...' : allInstalled ? 'All good!' : 'Some things are not installed'}</Text>
         <Button

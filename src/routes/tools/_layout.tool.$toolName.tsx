@@ -9,11 +9,8 @@ import { Box, Center, HStack, VStack } from 'styled-system/jsx';
 import { center, vstack } from 'styled-system/patterns';
 
 import { type Runtime, cli } from '~/api';
-import { RouteError } from '~/components/route-error';
-import { RoutePending } from '~/components/route-pending';
 import { useDebounce } from '~/hooks/debounce';
 import { useToast } from '~/hooks/toaster';
-import { queryClient } from '~/lib/query-client';
 import { $project } from '~/stores/project';
 import { Badge } from '~/ui/badge';
 import { Code } from '~/ui/code';
@@ -21,15 +18,8 @@ import { EasyTooltip } from '~/ui/easy-tooltip';
 import { IconButton } from '~/ui/icon-button';
 import { Input } from '~/ui/input';
 
-export const Route = createFileRoute('/$tool')({
-  loader: async ({ params }) => {
-    if (!$project.value) return;
-    await queryClient.ensureQueryData(cli.asdf.runtime.list(params.tool, { cwd: $project.value }));
-    await queryClient.ensureQueryData(cli.asdf.runtime.current(params.tool, { cwd: $project.value }));
-  },
+export const Route = createFileRoute('/tools/_layout/tool/$toolName')({
   component: Page,
-  pendingComponent: RoutePending,
-  errorComponent: RouteError,
 });
 
 const Row = forwardRef<
@@ -51,7 +41,7 @@ const Row = forwardRef<
       }}
       className={center({
         _hover: { bg: 'bg.emphasized' },
-        w: 'md',
+        w: 'full',
         rounded: 'md',
         p: '4',
         position: 'absolute',
@@ -59,7 +49,7 @@ const Row = forwardRef<
         left: '0',
       })}
     >
-      <HStack w="full" justify="space-between">
+      <HStack w="md" justify="space-between">
         <VStack gap="2" alignItems="start">
           <Code>{v.version}</Code>
           <HStack gap="2">
@@ -156,7 +146,7 @@ const Row = forwardRef<
 Row.displayName = 'Row';
 
 function Page() {
-  const { tool } = useParams({ from: '/$tool' });
+  const { toolName: tool } = useParams({ from: '/tools/_layout/tool/$toolName' });
   const toast = useToast();
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 500);
@@ -197,10 +187,11 @@ function Page() {
   });
 
   return (
-    <Box>
+    <Box h="screen" display="flex" flexDir="column">
       <Center>
-        <HStack p="4" w="md" justify="space-between" alignItems="center">
-          <Input maxW="48" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <HStack p="4" justify="space-between" alignItems="center">
+          <Code>{tool}</Code>
+          <Input flex="1" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
           <HStack gap="2">
             <EasyTooltip
               tooltip={
@@ -242,10 +233,20 @@ function Page() {
           </HStack>
         </HStack>
       </Center>
-      <Center>
-        <Box css={{ maxH: 'md', w: 'md', overflow: 'auto' }} ref={parentRef}>
+      <Center flex="1" pos="relative">
+        <Box
+          css={{
+            pos: 'absolute',
+            top: '0',
+            bottom: '0',
+            left: '0',
+            right: '0',
+            overflow: 'auto',
+          }}
+          ref={parentRef}
+        >
           <ul
-            className={vstack({ position: 'relative', w: 'full' })}
+            className={vstack({ position: 'relative', w: 'full', alignItems: 'center' })}
             style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
           >
             {rowVirtualizer.getVirtualItems().map((virtualItem) => {

@@ -9,8 +9,6 @@ import { Box, Center, HStack, VStack } from 'styled-system/jsx';
 import { center, vstack } from 'styled-system/patterns';
 
 import { type Plugin, cli } from '~/api';
-import { RouteError } from '~/components/route-error';
-import { RoutePending } from '~/components/route-pending';
 import { useDebounce } from '~/hooks/debounce';
 import { useToast } from '~/hooks/toaster';
 import { $project } from '~/stores/project';
@@ -20,10 +18,8 @@ import { EasyTooltip } from '~/ui/easy-tooltip';
 import { IconButton } from '~/ui/icon-button';
 import { Input } from '~/ui/input';
 
-export const Route = createFileRoute('/plugins')({
+export const Route = createFileRoute('/tools/_layout/plugins')({
   component: Page,
-  pendingComponent: RoutePending,
-  errorComponent: RouteError,
 });
 
 const Row = forwardRef<HTMLLIElement, Plugin & { index: number; start: number }>(
@@ -43,7 +39,7 @@ const Row = forwardRef<HTMLLIElement, Plugin & { index: number; start: number }>
         }}
         className={center({
           _hover: { bg: 'bg.emphasized' },
-          w: 'md',
+          w: 'full',
           rounded: 'md',
           p: '4',
           position: 'absolute',
@@ -51,7 +47,7 @@ const Row = forwardRef<HTMLLIElement, Plugin & { index: number; start: number }>
           left: '0',
         })}
       >
-        <HStack w="full" justify="space-between">
+        <HStack w="md" justify="space-between">
           <VStack gap="2" alignItems="start">
             <button
               className={css({ cursor: 'pointer' })}
@@ -159,7 +155,7 @@ function Page() {
   });
 
   return (
-    <Box>
+    <Box h="screen" display="flex" flexDir="column">
       <Center>
         <HStack p="4" w="md" justify="space-between">
           <Input maxW="48" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
@@ -183,10 +179,20 @@ function Page() {
           </HStack>
         </HStack>
       </Center>
-      <Center>
-        <Box css={{ maxH: 'md', w: 'md', overflow: 'auto' }} ref={parentRef}>
+      <Center flex="1" pos="relative">
+        <Box
+          css={{
+            pos: 'absolute',
+            top: '0',
+            bottom: '0',
+            left: '0',
+            right: '0',
+            overflow: 'auto',
+          }}
+          ref={parentRef}
+        >
           <ul
-            className={vstack({ position: 'relative', w: 'full' })}
+            className={vstack({ position: 'relative', w: 'full', alignItems: 'center' })}
             style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
           >
             {rowVirtualizer.getVirtualItems().map((virtualItem) => {
