@@ -5,6 +5,7 @@ import {
   ChevronRightIcon,
   ChevronUpIcon,
   HeartPulseIcon,
+  InfoIcon,
   LoaderCircleIcon,
   MenuIcon,
   PlayCircleIcon,
@@ -139,7 +140,7 @@ export const SidebarContent: React.FC = () => {
                 )}
               </IconButton>
             </EasyTooltip>
-            <Link to="/tools/plugins">
+            <Link to="/tools/plugins" onClick={() => $drawerOpen.set(false)}>
               <EasyTooltip tooltip="Add plugin">
                 <IconButton variant="outline" size="sm">
                   <PlusIcon />
@@ -245,7 +246,14 @@ export const SidebarFooterContent: React.FC = () => {
           </EasyTooltip>
         </Link>
       )}
-      <Link to="/tools/doctor">
+      <Link to="/tools/about" onClick={() => $drawerOpen.set(false)}>
+        <EasyTooltip tooltip="About">
+          <IconButton variant="outline">
+            <InfoIcon />
+          </IconButton>
+        </EasyTooltip>
+      </Link>
+      <Link to="/tools/doctor" onClick={() => $drawerOpen.set(false)}>
         <EasyTooltip tooltip="Doctor">
           <IconButton variant="outline">
             <HeartPulseIcon />
