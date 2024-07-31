@@ -71,7 +71,7 @@
     "bundle": {
       "active": true,
       "targets": ["app", "deb", "updater", "dmg"],
-      "identifier": "org.dxup",
+      "identifier": "uk.sharath.dxup",
       "icon": ["icons/dxup.png", "icons/dxup.icns", "icons/dxup.ico"]
     }
   }
