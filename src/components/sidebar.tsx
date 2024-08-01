@@ -238,7 +238,7 @@ export const SidebarFooterContent: React.FC = () => {
   return (
     <Box display="flex" justifyContent="flex-end" gap="2" p="4">
       {import.meta.env.DEV && (
-        <Link to="/playground">
+        <Link to="/tools/playground">
           <EasyTooltip tooltip="Playground">
             <IconButton variant="outline">
               <PlayCircleIcon />
@@ -262,9 +262,10 @@ export const SidebarFooterContent: React.FC = () => {
       </Link>
       <Button
         variant="outline"
-        disabled={asdfHelp.isError || true}
+        disabled={asdfHelp.isError}
         onClick={() => {
           void selectDirectoryMutation.mutateAsync({}).then((dir) => {
+            if (dir.length > 1 && dir.endsWith('/')) dir = dir.slice(0, -1);
             $project.set(dir);
           });
         }}

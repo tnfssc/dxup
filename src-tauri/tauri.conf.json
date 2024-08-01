@@ -28,7 +28,7 @@
         "readFile": true,
         "writeFile": true,
         "exists": true,
-        "scope": ["$HOME/.profile"]
+        "scope": ["$HOME/.profile", "**/.tool-versions"]
       },
       "shell": {
         "all": false,

@@ -29,7 +29,9 @@ function Layout() {
   useEffect(() => {
     if (project) return;
     if (!homeDir.data) return;
-    $project.set(homeDir.data);
+    let dir = homeDir.data;
+    if (dir.length > 1 && dir.endsWith('/')) dir = dir.slice(0, -1);
+    $project.set(dir);
   }, [homeDir.data, project]);
 
   useEffect(() => {

@@ -8,7 +8,7 @@ import { css } from 'styled-system/css';
 import { Box, Center, HStack, VStack } from 'styled-system/jsx';
 import { center, vstack } from 'styled-system/patterns';
 
-import { type Runtime, cli } from '~/api';
+import { type Runtime, cli, tauri } from '~/api';
 import { useDebounce } from '~/hooks/debounce';
 import { useToast } from '~/hooks/toaster';
 import { $project } from '~/stores/project';
@@ -31,6 +31,17 @@ const Row = forwardRef<
   const installMutation = useMutation(cli.asdf.runtime.install());
   const uninstallMutation = useMutation(cli.asdf.runtime.uninstall());
   const changeVersionMutation = useMutation(cli.asdf.runtime.global());
+
+  const currentQuery = useQuery(cli.asdf.runtime.current(v.toolName, { cwd: project }));
+  const current = currentQuery.data?.[0];
+  const normalizedProject = useQuery(tauri.path.normalize(project)).data;
+  const normalizedCurrent = useQuery(
+    tauri.path.normalize(current?.toolVersionLocation?.replace('/.tool-versions', '') ?? '/home'),
+  ).data;
+
+  const isProjectTool = normalizedProject && normalizedCurrent && normalizedProject === normalizedCurrent;
+
+  const inUse = !!isProjectTool && v.inUse;
 
   return (
     <li
@@ -59,9 +70,9 @@ const Row = forwardRef<
         </VStack>
         <HStack gap="2">
           {v.installed && (
-            <EasyTooltip tooltip={!v.inUse && 'Switch to this version'}>
+            <EasyTooltip tooltip={inUse && 'Switch to this version'}>
               <IconButton
-                disabled={v.inUse || changeVersionMutation.isPending}
+                disabled={inUse || changeVersionMutation.isPending}
                 variant="ghost"
                 size="sm"
                 onClick={() =>
