@@ -5,8 +5,6 @@ import { useEffect } from 'react';
 import { css } from 'styled-system/css';
 import { Box } from 'styled-system/jsx';
 
-import '~/global.css';
-
 import { cli, tauri } from '~/api';
 import { RouteError } from '~/components/route-error';
 import { RoutePending } from '~/components/route-pending';

@@ -1,7 +1,8 @@
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Outlet, ScrollRestoration, createRootRoute } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
-import { css } from 'styled-system/css';
+
+import { cn } from '~/utils';
 
 export const Route = createRootRoute({
   component: Root,
@@ -9,15 +10,7 @@ export const Route = createRootRoute({
 
 function Root() {
   return (
-    <div
-      className={css({
-        w: 'screen',
-        h: 'screen',
-        overflow: 'auto',
-        scrollBehavior: 'smooth',
-        scrollbar: 'hidden',
-      })}
-    >
+    <div className={cn('w-screen h-screen overflow-auto scroll-smooth')}>
       <ScrollRestoration />
       <Outlet />
       {import.meta.env.DEV && <TanStackRouterDevtools />}
