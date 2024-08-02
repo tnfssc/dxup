@@ -9,7 +9,7 @@ export const Route = createFileRoute('/')({
 function Page() {
   const router = useRouter();
   useEffect(() => {
-    void router.navigate({ to: '/tools' });
+    void router.navigate({ to: '/asdf' });
   }, [router]);
 
   return <></>;

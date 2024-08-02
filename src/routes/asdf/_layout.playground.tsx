@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { tauri } from '~/api';
 
-export const Route = createFileRoute('/tools/_layout/playground')({
+export const Route = createFileRoute('/asdf/_layout/playground')({
   component: Page,
 });
 

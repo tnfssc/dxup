@@ -6,77 +6,28 @@ import {
   ChevronUpIcon,
   HeartPulseIcon,
   InfoIcon,
-  LoaderCircleIcon,
-  MenuIcon,
   PlayCircleIcon,
   PlusIcon,
   RotateCcwIcon,
-  XIcon,
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { css } from 'styled-system/css';
-import { Box, Center, HStack, VStack } from 'styled-system/jsx';
-import { center, vstack } from 'styled-system/patterns';
+import { toast } from 'sonner';
 
 import { type Plugin, cli, tauri } from '~/api';
+import { EasyTooltip } from '~/components/easy-tooltip';
 import { useDebounce } from '~/hooks/debounce';
-import { useToast } from '~/hooks/toaster';
 import { queryClient } from '~/lib/query-client';
+import { Badge } from '~/shadcn/badge';
+import { Button } from '~/shadcn/button';
+import { Input } from '~/shadcn/input';
 import { $drawerOpen } from '~/stores/drawer';
 import { $project } from '~/stores/project';
-import { Badge } from '~/ui/badge';
-import { Button } from '~/ui/button';
-import { Code } from '~/ui/code';
-import * as Drawer from '~/ui/drawer';
-import { EasyTooltip } from '~/ui/easy-tooltip';
-import { IconButton } from '~/ui/icon-button';
-import { Input } from '~/ui/input';
-import { Text } from '~/ui/text';
+import { cn } from '~/utils';
 
-import { FloatingActionButton } from './floating-action-button';
-
-export interface SidebarDrawerProps extends Drawer.RootProps {
-  children: React.ReactNode;
-  title: string;
-  subtitle: string;
-  footerContent?: React.ReactNode;
-}
-
-export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({ children, title, subtitle, footerContent, ...props }) => {
-  return (
-    <Drawer.Root variant="left" immediate {...props}>
-      <Drawer.Trigger asChild>
-        <FloatingActionButton aria-label="Drawer" variant="ghost">
-          <MenuIcon />
-        </FloatingActionButton>
-      </Drawer.Trigger>
-      <Drawer.Backdrop />
-      <Drawer.Positioner>
-        <Drawer.Content>
-          <Drawer.Header>
-            <Drawer.Title>{title}</Drawer.Title>
-            <Drawer.Description>
-              <Code css={{ maxW: 'xs' }}>
-                <span className={css({ textOverflow: 'ellipsis', overflow: 'hidden' })}>{subtitle}</span>
-              </Code>
-            </Drawer.Description>
-            <Drawer.CloseTrigger asChild position="absolute" top="3" right="4">
-              <IconButton variant="ghost">
-                <XIcon />
-              </IconButton>
-            </Drawer.CloseTrigger>
-          </Drawer.Header>
-          <Drawer.Body p="0">{children}</Drawer.Body>
-          <Drawer.Footer gap="3">{footerContent}</Drawer.Footer>
-        </Drawer.Content>
-      </Drawer.Positioner>
-    </Drawer.Root>
-  );
-};
+import { LoaderIcon } from './LoaderIcon';
 
 export const SidebarContent: React.FC = () => {
   const project = useStore($project);
-  const toast = useToast();
   const router = useRouter();
   const asdfHelp = useQuery(cli.asdf.runtime.help());
   const asdfPluginList = useQuery(cli.asdf.plugin.list({ cwd: project }));
@@ -92,95 +43,81 @@ export const SidebarContent: React.FC = () => {
 
   useEffect(() => {
     if (asdfHelp.isError) {
-      void router.navigate({ to: '/tools/doctor' });
+      void router.navigate({ to: '/asdf/doctor' });
     }
   }, [asdfHelp.isError, router]);
 
   if (asdfHelp.isError)
     return (
-      <VStack p="4" gap="2">
-        <Text>
-          <Code>asdf</Code> is not installed
-        </Text>
-        <Link to="/tools/doctor">
+      <div className="flex flex-col p-4 gap-2">
+        <p>
+          <code>asdf</code> is not installed
+        </p>
+        <Link to="/asdf/doctor">
           <Button size="sm">Open doctor</Button>
         </Link>
-      </VStack>
+      </div>
     );
 
   return (
-    <VStack>
-      <Center w="sm">
-        <HStack p="4" justify="space-between">
-          <Input flex="1" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
-          <HStack gap="2">
+    <div className="flex flex-col">
+      <div className="flex justify-center w-96">
+        <div className="flex p-4 justify-between gap-4">
+          <Input className="flex-1" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <div className="gap-2 flex">
             <EasyTooltip tooltip="Update all plugins">
-              <IconButton
+              <Button
                 disabled={pluginUpdateAllMutation.isPending}
                 variant="outline"
-                size="sm"
+                size="icon"
                 onClick={() => {
                   toast.promise(pluginUpdateAllMutation.mutateAsync({}), {
-                    loading: {
-                      title: 'Updating plugins',
-                    },
-                    success: {
-                      title: 'Done updating plugins',
-                    },
-                    error: {
-                      title: 'Failed to update plugins',
-                    },
+                    loading: 'Updating plugins',
+                    success: 'Done updating plugins',
+                    error: 'Failed to update plugins',
                   });
                 }}
               >
-                {pluginUpdateAllMutation.isPending ? (
-                  <LoaderCircleIcon className={css({ animation: 'spin' })} />
-                ) : (
-                  <ChevronUpIcon />
-                )}
-              </IconButton>
+                {pluginUpdateAllMutation.isPending ? <LoaderIcon /> : <ChevronUpIcon />}
+              </Button>
             </EasyTooltip>
             <Link to="/tools/plugins" onClick={() => $drawerOpen.set(false)}>
               <EasyTooltip tooltip="Add plugin">
-                <IconButton variant="outline" size="sm">
+                <Button variant="outline" size="icon">
                   <PlusIcon />
-                </IconButton>
+                </Button>
               </EasyTooltip>
             </Link>
             <EasyTooltip tooltip="Refresh">
-              <IconButton
+              <Button
                 disabled={asdfPluginList.isFetching}
                 variant="outline"
-                size="sm"
+                size="icon"
                 onClick={() => {
                   void queryClient.invalidateQueries(cli.asdf.plugin.list());
-                  toast.success({ title: 'Refreshed' });
+                  toast.success('Refreshed');
                 }}
               >
-                {asdfPluginList.isFetching ? (
-                  <LoaderCircleIcon className={css({ animation: 'spin' })} />
-                ) : (
-                  <RotateCcwIcon />
-                )}
-              </IconButton>
+                {asdfPluginList.isFetching ? <LoaderIcon /> : <RotateCcwIcon />}
+              </Button>
             </EasyTooltip>
-          </HStack>
-        </HStack>
-      </Center>
-      <ul className={vstack({ w: 'sm' })}>
+          </div>
+        </div>
+      </div>
+      <ul className="w-96 flex flex-col">
         {plugins?.length === 0 && (
-          <li className={center({ _hover: { bg: 'bg.emphasized' }, w: 'md', rounded: 'md', p: '4' })}>
-            <VStack gap="2">
-              <Text>No plugins found</Text>
+          <li className="flex justify-center w-full rounded-md p-4 hover:bg-muted">
+            <div className="flex flex-col gap-2">
+              <p>No plugins found</p>
               <Link to="/tools/plugins">
                 <Button size="sm">Add plugin</Button>
               </Link>
-            </VStack>
+            </div>
           </li>
         )}
         {plugins?.map((plugin, index) => <Row key={plugin.name} {...plugin} index={index} />)}
       </ul>
-    </VStack>
+    </div>
   );
 };
 
@@ -201,28 +138,22 @@ const Row: React.FC<Plugin & { index: number }> = ({ name }) => {
   const isProjectTool = normalizedProject && normalizedCurrent && normalizedProject === normalizedCurrent;
 
   return (
-    <li className={center({ w: 'full' })}>
+    <li className="flex justify-center w-full">
       <Link
         to="/tools/tool/$toolName"
         params={{ toolName: name }}
-        className={center({
-          _hover: { bg: 'bg.emphasized' },
-          w: 'full',
-          rounded: 'md',
-          p: '4',
-          ...(match && { bg: 'bg.emphasized' }),
-        })}
+        className={cn('hover:bg-muted w-full rounded-md p-4', { 'bg-muted': !!match })}
         onClick={() => {
           $drawerOpen.set(false);
         }}
       >
-        <HStack w="full" justify="space-between">
-          <VStack gap="2" alignItems="start">
-            <Code>{name}</Code>
+        <div className="flex w-full justify-between">
+          <div className="flex flex-col gap-2 items-start">
+            <code>{name}</code>
             {isProjectTool && <Badge variant="outline">Current project</Badge>}
-          </VStack>
-          {current?.version && <Code>{current.version}</Code>}
-        </HStack>
+          </div>
+          {current?.version && <code>{current.version}</code>}
+        </div>
       </Link>
     </li>
   );
@@ -236,28 +167,28 @@ export const SidebarFooterContent: React.FC = () => {
   );
 
   return (
-    <Box display="flex" justifyContent="flex-end" gap="2" p="4">
+    <div className="flex justify-end gap-2 p-4">
       {import.meta.env.DEV && (
-        <Link to="/tools/playground">
+        <Link to="/asdf/playground">
           <EasyTooltip tooltip="Playground">
-            <IconButton variant="outline">
+            <Button variant="outline" size="icon">
               <PlayCircleIcon />
-            </IconButton>
+            </Button>
           </EasyTooltip>
         </Link>
       )}
-      <Link to="/tools/about" onClick={() => $drawerOpen.set(false)}>
+      <Link to="/asdf/about" onClick={() => $drawerOpen.set(false)}>
         <EasyTooltip tooltip="About">
-          <IconButton variant="outline">
+          <Button variant="outline" size="icon">
             <InfoIcon />
-          </IconButton>
+          </Button>
         </EasyTooltip>
       </Link>
-      <Link to="/tools/doctor" onClick={() => $drawerOpen.set(false)}>
+      <Link to="/asdf/doctor" onClick={() => $drawerOpen.set(false)}>
         <EasyTooltip tooltip="Doctor">
-          <IconButton variant="outline">
+          <Button variant="outline" size="icon">
             <HeartPulseIcon />
-          </IconButton>
+          </Button>
         </EasyTooltip>
       </Link>
       <Button
@@ -273,6 +204,6 @@ export const SidebarFooterContent: React.FC = () => {
         Open project
         <ChevronRightIcon />
       </Button>
-    </Box>
+    </div>
   );
 };

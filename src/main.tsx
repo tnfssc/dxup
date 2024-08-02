@@ -7,6 +7,7 @@ import '~/tailwind.css';
 import '~/fonts';
 import Providers from '~/providers';
 import { routeTree } from '~/routeTree.gen';
+import { Toaster } from '~/shadcn/sonner';
 
 const router = createRouter({ routeTree });
 
@@ -28,6 +29,7 @@ globalThis.wait = (time: number) => new Promise((resolve) => setTimeout(resolve,
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <Toaster />
     <Providers>
       <RouterProvider router={router} />
     </Providers>
