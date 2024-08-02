@@ -1,10 +1,11 @@
 import type { Assign } from '@ark-ui/react';
 import { Slider as ArkSlider, type SliderRootProps } from '@ark-ui/react/slider';
 import { type ReactNode, forwardRef } from 'react';
-import { css, cx } from 'styled-system/css';
 import { splitCssProps } from 'styled-system/jsx';
 import { type SliderVariantProps, slider } from 'styled-system/recipes';
 import type { JsxStyleProps } from 'styled-system/types';
+
+import { css, cx } from 'styled-system/css';
 
 export interface SliderProps extends Assign<JsxStyleProps, SliderRootProps>, SliderVariantProps {
   marks?: {

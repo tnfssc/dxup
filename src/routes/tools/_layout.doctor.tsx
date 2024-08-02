@@ -1,8 +1,9 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { CheckIcon, ChevronDownIcon, RefreshCcwIcon, XIcon } from 'lucide-react';
-import { css } from 'styled-system/css';
 import { Box, Center, HStack, VStack } from 'styled-system/jsx';
+
+import { css } from 'styled-system/css';
 
 import { asdfProfileConfig, cli } from '~/api';
 import { useToast } from '~/hooks/toaster';

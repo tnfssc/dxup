@@ -1,10 +1,11 @@
 import type { Assign } from '@ark-ui/react';
 import { type HTMLArkProps, ark } from '@ark-ui/react/factory';
 import { forwardRef } from 'react';
-import { css, cx } from 'styled-system/css';
 import { splitCssProps } from 'styled-system/jsx';
 import { type IconVariantProps, icon } from 'styled-system/recipes';
 import type { JsxStyleProps } from 'styled-system/types';
+
+import { css, cx } from 'styled-system/css';
 
 export interface IconProps extends Assign<JsxStyleProps, HTMLArkProps<'svg'>>, IconVariantProps {}
 

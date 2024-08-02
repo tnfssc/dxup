@@ -1,10 +1,11 @@
 import type { Assign } from '@ark-ui/react';
 import { Checkbox as ArkCheckbox } from '@ark-ui/react/checkbox';
 import { forwardRef } from 'react';
-import { css, cx } from 'styled-system/css';
 import { splitCssProps } from 'styled-system/jsx';
 import { type CheckboxVariantProps, checkbox } from 'styled-system/recipes';
 import type { JsxStyleProps } from 'styled-system/types';
+
+import { css, cx } from 'styled-system/css';
 
 export interface CheckboxProps extends Assign<JsxStyleProps, ArkCheckbox.RootProps>, CheckboxVariantProps {}
 

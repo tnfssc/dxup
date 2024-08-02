@@ -1,6 +1,7 @@
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Outlet, ScrollRestoration, createRootRoute } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+
 import { css } from 'styled-system/css';
 
 export const Route = createRootRoute({
