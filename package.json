@@ -17,7 +17,7 @@
   "prettier": {
     "bracketSpacing": true,
     "importOrder": [
-      "^(.*).css$",
+      "^(.*)[.]css$",
       "^react/(.*)$",
       "^~/(.*)$",
       "^[./](.*)$"

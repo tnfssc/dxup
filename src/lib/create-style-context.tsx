@@ -7,9 +7,8 @@ import {
   forwardRef,
   useContext,
 } from 'react';
-import { styled } from 'styled-system/jsx';
-
 import { cx } from 'styled-system/css';
+import { styled } from 'styled-system/jsx';
 
 type Props = Record<string, unknown>;
 interface Recipe {

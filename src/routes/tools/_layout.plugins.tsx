@@ -4,10 +4,9 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { DownloadIcon, LoaderCircleIcon, RotateCcwIcon, TrashIcon } from 'lucide-react';
 import { Fragment, forwardRef, useMemo, useRef, useState } from 'react';
+import { css } from 'styled-system/css';
 import { Box, Center, HStack, VStack } from 'styled-system/jsx';
 import { center, vstack } from 'styled-system/patterns';
-
-import { css } from 'styled-system/css';
 
 import { type Plugin, cli } from '~/api';
 import { useDebounce } from '~/hooks/debounce';
