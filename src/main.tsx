@@ -3,7 +3,6 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import '~/fonts';
-import '~/global.css';
 import Providers from '~/providers';
 import { routeTree } from '~/routeTree.gen';
 

@@ -2,8 +2,10 @@ import { useStore } from '@nanostores/react';
 import { useQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute, useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { css } from 'styled-system/css';
 import { Box } from 'styled-system/jsx';
+
+import { css } from 'styled-system/css';
+import '~/global.css';
 
 import { cli, tauri } from '~/api';
 import { RouteError } from '~/components/route-error';

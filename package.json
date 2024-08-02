@@ -17,6 +17,7 @@
   "prettier": {
     "bracketSpacing": true,
     "importOrder": [
+      "^(.*).css$",
       "^react/(.*)$",
       "^~/(.*)$",
       "^[./](.*)$"
@@ -95,8 +96,10 @@
     "@pandacss/dev": "^0.44.0",
     "@park-ui/panda-preset": "^0.39.0",
     "@tanstack/eslint-plugin-query": "^5.51.1",
+    "@tanstack/query-async-storage-persister": "^5.51.17",
     "@tanstack/react-query": "^5.51.1",
     "@tanstack/react-query-devtools": "^5.51.11",
+    "@tanstack/react-query-persist-client": "^5.51.18",
     "@tanstack/react-virtual": "^3.8.3",
     "@tanstack/router-cli": "^1.45.8",
     "@tanstack/router-devtools": "^1.45.1",
@@ -122,6 +125,7 @@
     "prettier-plugin-packagejson": "^2.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "tauri-plugin-store-api": "https://github.com/tauri-apps/tauri-plugin-store#v1",
     "typescript": "^5.5.3",
     "vite": "^5.3.3",
     "vite-tsconfig-paths": "^4.3.2"

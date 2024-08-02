@@ -1,13 +1,16 @@
-import { QueryClientProvider as ReactQueryProvider } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { ToastProvider, useToast } from '~/hooks/toaster';
-import { createQueryClient } from '~/lib/query-client';
+import { PersistQueryClientProvider, asyncStoragePersister, createQueryClient } from '~/lib/query-client';
 
 function QueryClientProvider({ children }: React.PropsWithChildren) {
   const toast = useToast();
   const queryClient = useMemo(() => createQueryClient(toast), [toast]);
-  return <ReactQueryProvider client={queryClient}>{children}</ReactQueryProvider>;
+  return (
+    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister: asyncStoragePersister }}>
+      {children}
+    </PersistQueryClientProvider>
+  );
 }
 
 export default function Providers({ children }: React.PropsWithChildren) {

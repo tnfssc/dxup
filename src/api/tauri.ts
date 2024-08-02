@@ -2,7 +2,7 @@
 import { type UseMutationOptions, queryOptions } from '@tanstack/react-query';
 import { type OpenDialogOptions, open } from '@tauri-apps/api/dialog';
 import { exists, readTextFile, writeTextFile } from '@tauri-apps/api/fs';
-import { normalize } from '@tauri-apps/api/path';
+import { appDataDir, normalize } from '@tauri-apps/api/path';
 
 import { queryClient } from '~/lib/query-client';
 
@@ -34,6 +34,14 @@ export const tauri = {
           const homeDirectory = await queryClient.fetchQuery(cli.homeDir());
           if (p.includes(homeDirectory)) p = p.replace(homeDirectory, '~/');
           return p;
+        },
+      });
+    },
+    appDataDir() {
+      return queryOptions({
+        queryKey: ['path', 'appDataDir'].filter((v) => !!v),
+        queryFn: async () => {
+          return await appDataDir();
         },
       });
     },
