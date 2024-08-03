@@ -47,15 +47,6 @@ const Row = forwardRef<
       style={{
         transform: `translateY(${v.start}px)`,
       }}
-      // className={center({
-      //   _hover: { bg: 'bg.emphasized' },
-      //   w: 'full',
-      //   rounded: 'md',
-      //   p: '4',
-      //   position: 'absolute',
-      //   top: '0',
-      //   left: '0',
-      // })}
       className={cn('absolute left-0 top-0 flex w-full justify-center rounded-md p-4 hover:bg-secondary')}
     >
       <div className="flex w-96 justify-between">
