@@ -17,11 +17,11 @@ jobs:
           - platform: 'macos-latest'
             args: '--target aarch64-apple-darwin'
             artifact_name: 'dmg/dxup_0.0.1_aarch64.dmg'
-            asset_name: 'dxup-macos-aarch64-${{ github.ref }}.dmg'
+            asset_name: 'dxup-macos-aarch64-${{ github.ref_name }}.dmg'
           - platform: 'ubuntu-20.04'
             args: ''
             artifact_name: 'deb/dxup_0.0.1_amd64.deb'
-            asset_name: 'dxup-linux-amd64-${{ github.ref }}.deb'
+            asset_name: 'dxup-linux-amd64-${{ github.ref_name }}.deb'
 
     runs-on: ${{ matrix.platform }}
     steps:
