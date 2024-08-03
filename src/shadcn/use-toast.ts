@@ -135,6 +135,7 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, 'id'>;
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function toast({ ...props }: Toast) {
   const id = genId();
 
@@ -164,6 +165,7 @@ function toast({ ...props }: Toast) {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
 

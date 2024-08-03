@@ -7,7 +7,7 @@ import { cache } from '~/stores/cache';
 
 export let queryClient: QueryClient;
 
-export function createQueryClient(toast: ReturnType<typeof useToast>['toast']) {
+export function createQueryClient(toast: ReturnType<typeof useToast>['toast']): QueryClient {
   const qc = new QueryClient({
     defaultOptions: {
       mutations: {

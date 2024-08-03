@@ -21,6 +21,11 @@
     "noFallthroughCasesInSwitch": true,
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "useUnknownInCatchVariables": true,
+    "disableSizeLimit": true,
+    "assumeChangesOnlyAffectDirectDependencies": true,
     "paths": {
       "~/*": ["./src/*"]
     }

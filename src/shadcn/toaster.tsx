@@ -1,7 +1,7 @@
 import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '~/shadcn/toast';
 import { useToast } from '~/shadcn/use-toast';
 
-export function Toaster() {
+export function Toaster(): React.ReactNode {
   const { toasts } = useToast();
 
   return (

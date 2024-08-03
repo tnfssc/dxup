@@ -13,6 +13,6 @@ function QueryClientProvider({ children }: React.PropsWithChildren) {
   );
 }
 
-export default function Providers({ children }: React.PropsWithChildren) {
+export default function Providers({ children }: React.PropsWithChildren): React.ReactNode {
   return <QueryClientProvider>{children}</QueryClientProvider>;
 }

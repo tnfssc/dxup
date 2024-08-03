@@ -133,7 +133,7 @@ function Page() {
   const allVersionsQuery = useQuery(cli.asdf.runtime.listAll(tool, { cwd: project }));
   const allVersions = allVersionsQuery.data;
   const installedVersionsQuery = useQuery(cli.asdf.runtime.list(tool, { cwd: project }));
-  const installedVersions = installedVersionsQuery.data?.[0].versions;
+  const installedVersions = installedVersionsQuery.data?.[0]?.versions;
   const currentQuery = useQuery(cli.asdf.runtime.current(tool, { cwd: project }));
   const current = currentQuery.data?.[0];
 

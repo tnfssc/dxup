@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @tanstack/query/exhaustive-deps */
 import { type UseMutationOptions, queryOptions } from '@tanstack/react-query';
 import { BaseDirectory, exists, readTextFile, writeTextFile } from '@tauri-apps/api/fs';
@@ -75,6 +76,7 @@ function parseCurrentRuntimeList(input: string, homeDir?: string): CurrentRuntim
     .filter((line) => line !== '')
     .map((line) => {
       const [name, version, ..._tvLoc] = line.split(' ').filter((part) => part !== '');
+      if (!name || !version) throw new Error(`Invalid line: ${line}`);
       const isVersionUnset = version === '______';
       let toolVersionLocation = isVersionUnset ? null : _tvLoc.join(' ');
       if (homeDir && toolVersionLocation?.includes(homeDir))
@@ -102,6 +104,7 @@ function parsePluginList(input: string, installed?: true): Plugin[] {
     .map((line) => {
       // eslint-disable-next-line prefer-const
       let [name, url] = line.split(' ').filter((part) => part !== '');
+      if (!name || !url) throw new Error(`Invalid line: ${line}`);
       const isInstalled = !installed ? url.startsWith('*') : false;
       if (isInstalled) url = url.replace('*', '');
       return { name, url, installed: isInstalled };

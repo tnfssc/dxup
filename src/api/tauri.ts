@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @tanstack/query/exhaustive-deps */
 import { type UseMutationOptions, queryOptions } from '@tanstack/react-query';
 import { type OpenDialogOptions, open } from '@tauri-apps/api/dialog';
@@ -17,7 +18,7 @@ export const tauri = {
           const options = { ...defaultOptions, ..._options };
           let dir: string | null = null;
           const selected = await open(options);
-          if (Array.isArray(selected)) dir = selected[0];
+          if (Array.isArray(selected)) dir = selected[0] ?? null;
           else dir = selected;
           if (!dir) throw new Error('No directory selected');
           return dir;
