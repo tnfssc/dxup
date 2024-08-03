@@ -1,5 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useRouter } from '@tanstack/react-router';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
 export const Route = createFileRoute('/')({
@@ -9,7 +8,7 @@ export const Route = createFileRoute('/')({
 function Page() {
   const router = useRouter();
   useEffect(() => {
-    void router.navigate({ to: '/tools' });
+    void router.navigate({ to: '/asdf' });
   }, [router]);
 
   return <></>;
