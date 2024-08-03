@@ -426,7 +426,7 @@ export const cli = {
       queryKey: ['homeDir'],
       queryFn: async () => {
         let homeDirectory = await homeDir();
-        if (homeDirectory.length > 1 && homeDirectory.at(-1) === '/') homeDirectory = homeDirectory.slice(0, -1);
+        if (homeDirectory.length > 1 && homeDirectory.endsWith('/')) homeDirectory = homeDirectory.slice(0, -1);
         return homeDirectory;
       },
     });
