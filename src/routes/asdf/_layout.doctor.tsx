@@ -32,8 +32,8 @@ function Page() {
   const isFetching = asdfQuery.isFetching || gitQuery.isFetching || curlQuery.isFetching;
 
   return (
-    <div className="flex flex-col gap-4 mt-8 p-4 justify-center">
-      <div className="py-4 px-4 w-full justify-between items-center flex">
+    <div className="mt-8 flex flex-col justify-center gap-4 p-4">
+      <div className="flex w-full items-center justify-between px-4 py-4">
         <p>{isFetching ? 'Loading...' : allInstalled ? 'All good!' : 'Some things are not installed'}</p>
         <Button
           disabled={isFetching}

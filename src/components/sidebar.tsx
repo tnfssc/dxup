@@ -49,7 +49,7 @@ export const SidebarContent: React.FC = () => {
 
   if (asdfHelp.isError)
     return (
-      <div className="flex flex-col p-4 gap-2">
+      <div className="flex flex-col gap-2 p-4">
         <p>
           <code>asdf</code> is not installed
         </p>
@@ -61,10 +61,10 @@ export const SidebarContent: React.FC = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex justify-center w-96">
-        <div className="flex p-4 justify-between gap-4">
+      <div className="flex w-96 justify-center">
+        <div className="flex justify-between gap-4 p-4">
           <Input className="flex-1" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
-          <div className="gap-2 flex">
+          <div className="flex gap-2">
             <EasyTooltip tooltip="Update all plugins">
               <Button
                 disabled={pluginUpdateAllMutation.isPending}
@@ -104,9 +104,9 @@ export const SidebarContent: React.FC = () => {
           </div>
         </div>
       </div>
-      <ul className="w-96 flex flex-col">
+      <ul className="flex w-96 flex-col">
         {plugins?.length === 0 && (
-          <li className="flex justify-center w-full rounded-md p-4 hover:bg-muted">
+          <li className="flex w-full justify-center rounded-md p-4 hover:bg-muted">
             <div className="flex flex-col gap-2">
               <p>No plugins found</p>
               <Link to="/asdf/plugins">
@@ -138,17 +138,17 @@ const Row: React.FC<Plugin & { index: number }> = ({ name }) => {
   const isProjectTool = normalizedProject && normalizedCurrent && normalizedProject === normalizedCurrent;
 
   return (
-    <li className="flex justify-center w-full">
+    <li className="flex w-full justify-center">
       <Link
         to="/asdf/tool/$toolName"
         params={{ toolName: name }}
-        className={cn('hover:bg-muted w-full rounded-md p-4', { 'bg-muted': !!match })}
+        className={cn('w-full rounded-md p-4 hover:bg-muted', { 'bg-muted': !!match })}
         onClick={() => {
           $drawerOpen.set(false);
         }}
       >
         <div className="flex w-full justify-between">
-          <div className="flex flex-col gap-2 items-start">
+          <div className="flex flex-col items-start gap-2">
             <code>{name}</code>
             {isProjectTool && <Badge variant="outline">Current project</Badge>}
           </div>

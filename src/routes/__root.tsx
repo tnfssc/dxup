@@ -10,7 +10,7 @@ export const Route = createRootRoute({
 
 function Root() {
   return (
-    <div className={cn('w-screen h-screen overflow-auto scroll-smooth')}>
+    <div className={cn('h-screen w-screen overflow-auto scroll-smooth')}>
       <ScrollRestoration />
       <Outlet />
       {import.meta.env.DEV && <TanStackRouterDevtools />}

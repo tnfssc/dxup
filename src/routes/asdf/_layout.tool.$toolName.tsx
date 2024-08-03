@@ -56,10 +56,10 @@ const Row = forwardRef<
       //   top: '0',
       //   left: '0',
       // })}
-      className={cn('flex justify-center w-full rounded-md p-4 absolute top-0 left-0 hover:bg-secondary')}
+      className={cn('absolute left-0 top-0 flex w-full justify-center rounded-md p-4 hover:bg-secondary')}
     >
       <div className="flex w-96 justify-between">
-        <div className="flex flex-col gap-2 items-start">
+        <div className="flex flex-col items-start gap-2">
           <code>{v.version}</code>
           <div className="flex gap-2">
             {v.installed && <Badge variant="outline">Installed</Badge>}
@@ -173,9 +173,9 @@ function Page() {
   });
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex h-screen flex-col">
       <div className="flex justify-center">
-        <div className="flex p-4 justify-between items-center">
+        <div className="flex items-center justify-between p-4">
           <code>{tool}</code>
           <Input className="flex" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
           <div className="flex gap-2">
@@ -212,10 +212,10 @@ function Page() {
         </div>
       </div>
       {/* <Center flex="1" pos="relative"> */}
-      <div className="flex justify-center flex-1 relative">
-        <div className="absolute top-0 bottom-0 left-0 right-0 overflow-auto" ref={parentRef}>
+      <div className="relative flex flex-1 justify-center">
+        <div className="absolute bottom-0 left-0 right-0 top-0 overflow-auto" ref={parentRef}>
           <ul
-            className="flex flex-col relative w-full items-center"
+            className="relative flex w-full flex-col items-center"
             style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
           >
             {rowVirtualizer.getVirtualItems().map((virtualItem) => {

@@ -38,9 +38,9 @@ function Layout() {
   if (!project && !asdfHelp.isPending) return null;
 
   return (
-    <div className={cn('w-screen h-screen overflow-auto scroll-smooth')}>
+    <div className={cn('h-screen w-screen overflow-auto scroll-smooth')}>
       <div className="flex">
-        <div className="max-w-md flex flex-col max-h-screen overflow-auto">
+        <div className="flex max-h-screen max-w-md flex-col overflow-auto">
           <EasyTooltip tooltip="Current project">
             <div className="p-4 pb-0">
               <code>{project}</code>

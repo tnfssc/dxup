@@ -33,10 +33,10 @@ const Row = forwardRef<HTMLLIElement, Plugin & { index: number; start: number }>
         style={{
           transform: `translateY(${start}px)`,
         }}
-        className="flex justify-center w-full rounded-md p-4 absolute top-0 left-0 hover:bg-secondary"
+        className="absolute left-0 top-0 flex w-full justify-center rounded-md p-4 hover:bg-secondary"
       >
         <div className="flex w-96 justify-between">
-          <div className="flex flex-col gap-2 items-start">
+          <div className="flex flex-col items-start gap-2">
             <button
               className="cursor-pointer"
               onClick={() => {
@@ -125,9 +125,9 @@ function Page() {
   });
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex h-screen flex-col">
       <div className="flex justify-center">
-        <div className="flex p-4 justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2 p-4">
           <Input className="max-w-48" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
           <div className="flex gap-2">
             <EasyTooltip tooltip="Refresh">
@@ -145,10 +145,10 @@ function Page() {
           </div>
         </div>
       </div>
-      <div className="flex justify-center flex-1 relative">
-        <div className="absolute top-0 bottom-0 left-0 right-0 overflow-auto" ref={parentRef}>
+      <div className="relative flex flex-1 justify-center">
+        <div className="absolute bottom-0 left-0 right-0 top-0 overflow-auto" ref={parentRef}>
           <ul
-            className="flex flex-col relative w-full items-center"
+            className="relative flex w-full flex-col items-center"
             style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
           >
             {rowVirtualizer.getVirtualItems().map((virtualItem) => {

@@ -12,7 +12,7 @@ function Page() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
+    <div className="flex min-h-screen flex-col items-center justify-center">
       <p className="text-secondary-foreground">
         This tool was created by{' '}
         <a href="https://sharath.uk" onClick={handleLinkClick} className="hover:underline">

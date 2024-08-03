@@ -25,10 +25,10 @@
     "importOrderSeparation": true,
     "importOrderSortSpecifiers": true,
     "plugins": [
-      "prettier-plugin-tailwindcss",
       "prettier-plugin-packagejson",
       "prettier-plugin-organize-imports",
-      "@trivago/prettier-plugin-sort-imports"
+      "@trivago/prettier-plugin-sort-imports",
+      "prettier-plugin-tailwindcss"
     ],
     "printWidth": 120,
     "semi": true,
