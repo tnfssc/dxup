@@ -81,7 +81,7 @@ export const SidebarContent: React.FC = () => {
                 {pluginUpdateAllMutation.isPending ? <LoaderIcon /> : <ChevronUpIcon />}
               </Button>
             </EasyTooltip>
-            <Link to="/tools/plugins" onClick={() => $drawerOpen.set(false)}>
+            <Link to="/asdf/plugins" onClick={() => $drawerOpen.set(false)}>
               <EasyTooltip tooltip="Add plugin">
                 <Button variant="outline" size="icon">
                   <PlusIcon />
@@ -109,7 +109,7 @@ export const SidebarContent: React.FC = () => {
           <li className="flex justify-center w-full rounded-md p-4 hover:bg-muted">
             <div className="flex flex-col gap-2">
               <p>No plugins found</p>
-              <Link to="/tools/plugins">
+              <Link to="/asdf/plugins">
                 <Button size="sm">Add plugin</Button>
               </Link>
             </div>
@@ -123,7 +123,7 @@ export const SidebarContent: React.FC = () => {
 
 const Row: React.FC<Plugin & { index: number }> = ({ name }) => {
   const match = useMatch({
-    from: '/tools/_layout/tool/$toolName',
+    from: '/asdf/_layout/tool/$toolName',
     shouldThrow: false,
     select: (m) => (m.params.toolName === name ? m : undefined),
   });
@@ -140,7 +140,7 @@ const Row: React.FC<Plugin & { index: number }> = ({ name }) => {
   return (
     <li className="flex justify-center w-full">
       <Link
-        to="/tools/tool/$toolName"
+        to="/asdf/tool/$toolName"
         params={{ toolName: name }}
         className={cn('hover:bg-muted w-full rounded-md p-4', { 'bg-muted': !!match })}
         onClick={() => {

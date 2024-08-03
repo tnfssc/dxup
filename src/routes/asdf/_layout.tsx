@@ -31,7 +31,7 @@ function Layout() {
   useEffect(() => {
     if (asdfHelp.isPending) return;
     if (asdfHelp.isError) {
-      void router.navigate({ to: '/tools/doctor' });
+      void router.navigate({ to: '/asdf/doctor' });
     }
   }, [asdfHelp.isError, asdfHelp.isPending, router]);
 

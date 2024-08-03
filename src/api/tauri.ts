@@ -32,7 +32,7 @@ export const tauri = {
         queryFn: async () => {
           let p = await normalize(path);
           const homeDirectory = await queryClient.fetchQuery(cli.homeDir());
-          if (p.includes(homeDirectory)) p = p.replace(homeDirectory, '~/');
+          if (p.includes(homeDirectory)) p = p.replace(homeDirectory, '~');
           return p;
         },
       });
