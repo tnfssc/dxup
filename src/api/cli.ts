@@ -80,7 +80,7 @@ function parseCurrentRuntimeList(input: string, homeDir?: string): CurrentRuntim
       const isVersionUnset = version === '______';
       let toolVersionLocation = isVersionUnset ? null : _tvLoc.join(' ');
       if (homeDir && toolVersionLocation?.includes(homeDir))
-        toolVersionLocation = toolVersionLocation.replace(homeDir, '~/');
+        toolVersionLocation = toolVersionLocation.replace(homeDir, '~');
       return {
         name,
         version: isVersionUnset ? null : version,
@@ -114,7 +114,7 @@ function parsePluginList(input: string, installed?: true): Plugin[] {
 
 function parsePath(_input: string, homeDir?: string): string[] {
   let input = _input;
-  if (homeDir && input.startsWith(homeDir)) input = input.replace(homeDir, '~/');
+  if (homeDir && input.startsWith(homeDir)) input = input.replace(homeDir, '~');
   return input
     .split('/')
     .map((p) => p.trim())

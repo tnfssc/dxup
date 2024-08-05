@@ -59,7 +59,7 @@ const Row = forwardRef<
         </div>
         <div className="flex gap-2">
           {v.installed && (
-            <EasyTooltip tooltip={inUse && 'Switch to this version'}>
+            <EasyTooltip tooltip={!inUse && 'Switch to this version'}>
               <Button
                 disabled={inUse || changeVersionMutation.isPending}
                 variant="ghost"
