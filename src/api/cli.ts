@@ -6,19 +6,9 @@ import { homeDir } from '@tauri-apps/api/path';
 import { Command } from '@tauri-apps/api/shell';
 
 import { queryClient } from '~/lib/query-client';
+import { CommandError, executeCommand } from '~/utils';
 
-export class CommandError extends Error {
-  constructor(
-    message: string,
-    public code: number | null,
-  ) {
-    super(message);
-  }
-  name = 'CommandError';
-  static is(error: unknown): error is CommandError {
-    return error instanceof CommandError;
-  }
-}
+export const ASDF_BRANCH = 'v0.14.0';
 
 export interface Runtime {
   name: string;
@@ -124,6 +114,7 @@ function parsePath(_input: string, homeDir?: string): string[] {
 export interface CommandOptions {
   cwd?: string;
   env?: Record<string, string>;
+  signal?: AbortSignal;
 }
 
 export const asdfProfileConfig = () => `export ASDF_DIR="$HOME/.asdf"\n. "$HOME/.asdf/asdf.sh"`;
@@ -134,11 +125,11 @@ export const cli = {
       help(options?: CommandOptions) {
         return queryOptions<string, CommandError>({
           queryKey: ['help', options].filter((v) => !!v),
-          queryFn: async () => {
+          queryFn: async ({ signal }) => {
             const args = ['--help'];
             const command = new Command('asdf', args, options);
-            const { stdout, code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [stdout, stderr] = await executeCommand('asdf --help', command, { signal });
+            if (stderr) console.error(stderr);
             return stdout;
           },
           retry: false,
@@ -147,12 +138,12 @@ export const cli = {
       list(toolName?: string, options?: CommandOptions) {
         return queryOptions<Runtime[], CommandError>({
           queryKey: ['list', toolName, options].filter((v) => !!v),
-          queryFn: async () => {
+          queryFn: async ({ signal }) => {
             const args = ['list'];
             if (toolName) args.push(toolName);
             const command = new Command('asdf', args, options);
-            const { stdout, code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [stdout, stderr] = await executeCommand('asdf list', command, { signal });
+            if (stderr) console.error(stderr);
             return parseRuntimesList(stdout, toolName);
           },
         });
@@ -160,12 +151,12 @@ export const cli = {
       listAll(toolName: string, options?: CommandOptions) {
         return queryOptions<string[], CommandError>({
           queryKey: ['list', 'all', toolName, options].filter((v) => !!v),
-          queryFn: async () => {
+          queryFn: async ({ signal }) => {
             const args = ['list', 'all'];
             if (toolName) args.push(toolName);
             const command = new Command('asdf', args, options);
-            const { stdout, code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [stdout, stderr] = await executeCommand('asdf list all', command, { signal });
+            if (stderr) console.error(stderr);
             return parseVersionsList(stdout);
           },
         });
@@ -173,12 +164,12 @@ export const cli = {
       current(toolName?: string, options?: CommandOptions) {
         return queryOptions<CurrentRuntime[], CommandError>({
           queryKey: ['current', toolName, options].filter((v) => !!v),
-          queryFn: async () => {
+          queryFn: async ({ signal }) => {
             const args = ['current'];
             if (toolName) args.push(toolName);
             const command = new Command('asdf', args, options);
-            const { stdout, code, stderr } = await command.execute();
-            if (code !== 0 && code !== 126) throw new CommandError(stderr, code);
+            const [stdout, stderr] = await executeCommand('asdf current', command, { signal });
+            if (stderr) console.error(stderr);
             const homeDirectory = await queryClient.fetchQuery(cli.homeDir());
             return parseCurrentRuntimeList(stdout, homeDirectory);
           },
@@ -192,8 +183,8 @@ export const cli = {
             if (toolName) args.push(toolName);
             if (version) args.push(version);
             const command = new Command('asdf', args, options);
-            const { code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [, stderr] = await executeCommand('asdf reshim', command, { signal: options?.signal, logs: true });
+            if (stderr) console.error(stderr);
           },
         } satisfies UseMutationOptions<void, CommandError>;
       },
@@ -203,8 +194,8 @@ export const cli = {
           mutationFn: async ({ toolName, version, options }) => {
             const args = ['global', toolName, version];
             const command = new Command('asdf', args, options);
-            const { code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [, stderr] = await executeCommand('asdf global', command, { signal: options?.signal, logs: true });
+            if (stderr) console.error(stderr);
           },
           onSuccess: async (_, { toolName }) => {
             await Promise.all([
@@ -222,12 +213,12 @@ export const cli = {
       where(toolName: string, version?: string, options?: CommandOptions) {
         return queryOptions<string[], CommandError>({
           queryKey: ['where', toolName, version, options].filter((v) => !!v),
-          queryFn: async () => {
+          queryFn: async ({ signal }) => {
             const args = ['where', toolName];
             if (version) args.push(version);
             const command = new Command('asdf', args, options);
-            const { code, stderr, stdout } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [stdout, stderr] = await executeCommand('asdf where', command, { signal });
+            if (stderr) console.error(stderr);
             const homeDirectory = await queryClient.fetchQuery(cli.homeDir());
             return parsePath(stdout, homeDirectory);
           },
@@ -236,11 +227,11 @@ export const cli = {
       which(toolName: string, options?: CommandOptions) {
         return queryOptions<string[], CommandError>({
           queryKey: ['which', toolName, options].filter((v) => !!v),
-          queryFn: async () => {
+          queryFn: async ({ signal }) => {
             const args = ['which', toolName];
             const command = new Command('asdf', args, options);
-            const { code, stderr, stdout } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [stdout, stderr] = await executeCommand('asdf which', command, { signal });
+            if (stderr) console.error(stderr);
             const homeDirectory = await queryClient.fetchQuery(cli.homeDir());
             return parsePath(stdout, homeDirectory);
           },
@@ -254,8 +245,8 @@ export const cli = {
             if (toolName) args.push(toolName);
             if (version) args.push(version);
             const command = new Command('asdf', args, options);
-            const { code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [, stderr] = await executeCommand('asdf install', command, { signal: options?.signal, logs: true });
+            if (stderr) console.error(stderr);
           },
           onSuccess: async (_, { toolName }) => {
             await Promise.all([
@@ -282,8 +273,8 @@ export const cli = {
             if (toolName) args.push(toolName);
             if (version) args.push(version);
             const command = new Command('asdf', args, options);
-            const { code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [, stderr] = await executeCommand('asdf uninstall', command, { signal: options?.signal, logs: true });
+            if (stderr) console.error(stderr);
           },
           onSuccess: async (_, { toolName }) => {
             await Promise.all([
@@ -307,11 +298,11 @@ export const cli = {
       list(options?: CommandOptions) {
         return queryOptions<Plugin[], CommandError>({
           queryKey: ['plugin', 'list', options].filter((v) => !!v),
-          queryFn: async () => {
+          queryFn: async ({ signal }) => {
             const args = ['plugin', 'list', '--urls'];
             const command = new Command('asdf', args, options);
-            const { stdout, code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [stdout, stderr] = await executeCommand('asdf plugin list', command, { signal });
+            if (stderr) console.error(stderr);
             return parsePluginList(stdout, true);
           },
         });
@@ -319,11 +310,13 @@ export const cli = {
       listAll(options?: CommandOptions) {
         return queryOptions<Plugin[], CommandError>({
           queryKey: ['plugin', 'list', 'all', options].filter((v) => !!v),
-          queryFn: async () => {
+          queryFn: async ({ signal }) => {
             const args = ['plugin', 'list', 'all'];
             const command = new Command('asdf', args, options);
-            const { stdout, code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [stdout, stderr] = await executeCommand(['asdf', 'plugin', 'list', 'all'].join(' '), command, {
+              signal,
+            });
+            if (stderr) console.error(stderr);
             return parsePluginList(stdout);
           },
         });
@@ -335,8 +328,11 @@ export const cli = {
             const args = ['plugin', 'add', toolName];
             if (url) args.push(url);
             const command = new Command('asdf', args, options);
-            const { code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [, stderr] = await executeCommand('asdf plugin add', command, {
+              signal: options?.signal,
+              logs: true,
+            });
+            if (stderr) console.error(stderr);
           },
           onSuccess: async () => {
             await Promise.all([
@@ -356,8 +352,11 @@ export const cli = {
           mutationFn: async ({ options, toolName }) => {
             const args = ['plugin', 'remove', toolName];
             const command = new Command('asdf', args, options);
-            const { code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [, stderr] = await executeCommand('asdf plugin remove', command, {
+              signal: options?.signal,
+              logs: true,
+            });
+            if (stderr) console.error(stderr);
           },
           onSuccess: async (_, { toolName }) => {
             await Promise.all([
@@ -378,8 +377,11 @@ export const cli = {
             const args = ['plugin', 'update', toolName];
             if (gitRef) args.push(gitRef);
             const command = new Command('asdf', args, options);
-            const { code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [, stderr] = await executeCommand('asdf plugin update', command, {
+              signal: options?.signal,
+              logs: true,
+            });
+            if (stderr) console.error(stderr);
           },
           onSuccess: async () => {
             await Promise.all([
@@ -399,8 +401,11 @@ export const cli = {
           mutationFn: async ({ options }) => {
             const args = ['plugin', 'update', '--all'];
             const command = new Command('asdf', args, options);
-            const { code, stderr } = await command.execute();
-            if (code !== 0) throw new CommandError(stderr, code);
+            const [, stderr] = await executeCommand('asdf plugin update', command, {
+              signal: options?.signal,
+              logs: true,
+            });
+            if (stderr) console.error(stderr);
           },
           onSuccess: async () => {
             await Promise.all([
@@ -415,14 +420,25 @@ export const cli = {
   pwd(options?: CommandOptions) {
     return queryOptions<string[], CommandError>({
       queryKey: ['pwd', options].filter((v) => !!v),
-      queryFn: async () => {
+      queryFn: async ({ signal }) => {
         const command = new Command('pwd', '', options);
-        const { stdout, code, stderr } = await command.execute();
-        if (code !== 0) throw new CommandError(stderr, code);
+        const [stdout, stderr] = await executeCommand('pwd', command, { signal });
+        if (stderr) console.error(stderr);
         const homeDirectory = await queryClient.fetchQuery(cli.homeDir());
         return parsePath(stdout, homeDirectory);
       },
     });
+  },
+  kill(pid: number, options?: CommandOptions) {
+    return {
+      mutationKey: ['kill', pid, options].filter((v) => !!v),
+      mutationFn: async () => {
+        const args = ['kill', pid.toString()];
+        const command = new Command('kill', args, options);
+        const [, stderr] = await executeCommand('kill', command, { signal: options?.signal, logs: true });
+        if (stderr) console.error(stderr);
+      },
+    } satisfies UseMutationOptions<void, CommandError>;
   },
   homeDir() {
     return queryOptions<string, CommandError>({
@@ -438,11 +454,11 @@ export const cli = {
     help(options?: CommandOptions) {
       return queryOptions<string, CommandError>({
         queryKey: ['git', 'help', options].filter((v) => !!v),
-        queryFn: async () => {
+        queryFn: async ({ signal }) => {
           const args = ['--help'];
           const command = new Command('git', args, options);
-          const { stdout, code, stderr } = await command.execute();
-          if (code !== 0) throw new CommandError(stderr, code);
+          const [stdout, stderr] = await executeCommand('git --help', command, { signal });
+          if (stderr) console.error(stderr);
           return stdout;
         },
       });
@@ -452,11 +468,25 @@ export const cli = {
     help(options?: CommandOptions) {
       return queryOptions<string, CommandError>({
         queryKey: ['curl', 'help', options].filter((v) => !!v),
-        queryFn: async () => {
+        queryFn: async ({ signal }) => {
           const args = ['--help'];
           const command = new Command('curl', args, options);
-          const { stdout, code, stderr } = await command.execute();
-          if (code !== 0) throw new CommandError(stderr, code);
+          const [stdout, stderr] = await executeCommand('curl --help', command, { signal });
+          if (stderr) console.error(stderr);
+          return stdout;
+        },
+      });
+    },
+  },
+  pgrep: {
+    help(options?: CommandOptions) {
+      return queryOptions<string, CommandError>({
+        queryKey: ['procps', 'help', options].filter((v) => !!v),
+        queryFn: async ({ signal }) => {
+          const args = ['--help'];
+          const command = new Command('procps', args, options);
+          const [stdout, stderr] = await executeCommand('procps --help', command, { signal });
+          if (stderr) console.error(stderr);
           return stdout;
         },
       });
@@ -465,12 +495,12 @@ export const cli = {
   downloadAsdf() {
     return {
       mutationKey: ['downloadAsdf'].filter((v) => !!v),
-      mutationFn: async () => {
+      mutationFn: async (options) => {
         const homeDir = await queryClient.fetchQuery(cli.homeDir());
-        const args = ['clone', 'https://github.com/asdf-vm/asdf.git', `${homeDir}/.asdf`, '--branch', 'v0.14.0'];
-        const command = new Command('git', args);
-        const { code, stderr } = await command.execute();
-        if (code !== 0) throw new CommandError(stderr, code);
+        const args = ['clone', 'https://github.com/asdf-vm/asdf.git', `${homeDir}/.asdf`, '--branch', ASDF_BRANCH];
+        const command = new Command('git', args, options);
+        const [, stderr] = await executeCommand('git clone', command, { signal: options.signal, logs: true });
+        if (stderr) console.error(stderr);
       },
       onSuccess: async () => {
         await Promise.all([
@@ -479,7 +509,7 @@ export const cli = {
           queryClient.invalidateQueries(cli.asdf.runtime.current()),
         ]);
       },
-    } satisfies UseMutationOptions<void, CommandError>;
+    } satisfies UseMutationOptions<void, CommandError, CommandOptions>;
   },
   addAsdfToProfile() {
     return {

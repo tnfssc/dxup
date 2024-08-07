@@ -6,9 +6,11 @@ import {
   ChevronUpIcon,
   HeartPulseIcon,
   InfoIcon,
+  ListIcon,
   PlayCircleIcon,
   PlusIcon,
   RotateCcwIcon,
+  XIcon,
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -25,6 +27,7 @@ import { $project } from '~/stores/project';
 import { cn } from '~/utils';
 
 import { LoaderIcon } from './LoaderIcon';
+import { LogsDrawer } from './logs-drawer';
 
 export const SidebarContent: React.FC = () => {
   const project = useStore($project);
@@ -71,11 +74,26 @@ export const SidebarContent: React.FC = () => {
                 variant="outline"
                 size="icon"
                 onClick={() => {
-                  toast.promise(pluginUpdateAllMutation.mutateAsync({}), {
-                    loading: 'Updating plugins',
-                    success: 'Done updating plugins',
-                    error: 'Failed to update plugins',
-                  });
+                  const abortController = new AbortController();
+                  toast.promise(
+                    pluginUpdateAllMutation.mutateAsync({
+                      options: { signal: abortController.signal },
+                    }),
+                    {
+                      loading: (
+                        <div className="flex w-full items-center justify-between gap-2">
+                          <span>Updating plugins</span>
+                          <EasyTooltip tooltip="Abort">
+                            <Button variant="ghost" size="icon" onClick={() => abortController.abort()}>
+                              <XIcon />
+                            </Button>
+                          </EasyTooltip>
+                        </div>
+                      ),
+                      success: 'Done updating plugins',
+                      error: 'Failed to update plugins',
+                    },
+                  );
                 }}
               >
                 {pluginUpdateAllMutation.isPending ? <LoaderIcon /> : <ChevronUpIcon />}
@@ -177,6 +195,17 @@ export const SidebarFooterContent: React.FC = () => {
           </EasyTooltip>
         </Link>
       )}
+      <LogsDrawer>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => {
+            $drawerOpen.set(false);
+          }}
+        >
+          <ListIcon />
+        </Button>
+      </LogsDrawer>
       <Link to="/asdf/about" onClick={() => $drawerOpen.set(false)}>
         <EasyTooltip tooltip="About">
           <Button variant="outline" size="icon">

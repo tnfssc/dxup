@@ -1,18 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 
-import { tauri } from '~/api';
+import { cli } from '~/api';
 
 export const Route = createFileRoute('/asdf/_layout/playground')({
   component: Page,
 });
 
 function Page() {
-  const appDataDir = useQuery(tauri.path.appDataDir());
+  const allPlugins = useQuery({ ...cli.asdf.plugin.listAll(), queryKey: [25] });
 
   return (
     <div>
-      <pre>{appDataDir.data}</pre>
+      <pre>{JSON.stringify(allPlugins.data, null, 2)}</pre>
     </div>
   );
 }

@@ -53,6 +53,16 @@
             "name": "curl",
             "cmd": "curl",
             "args": ["--help"]
+          },
+          {
+            "name": "pgrep",
+            "cmd": "pgrep",
+            "args": true
+          },
+          {
+            "name": "kill",
+            "cmd": "kill",
+            "args": true
           }
         ]
       }
@@ -60,7 +70,7 @@
     "windows": [
       {
         "title": "dxup",
-        "width": 800,
+        "width": 900,
         "height": 600,
         "titleBarStyle": "Transparent"
       }

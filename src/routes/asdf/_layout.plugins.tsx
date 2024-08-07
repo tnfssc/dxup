@@ -2,7 +2,7 @@ import { useStore } from '@nanostores/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { DownloadIcon, RotateCcwIcon, TrashIcon } from 'lucide-react';
+import { DownloadIcon, RotateCcwIcon, TrashIcon, XIcon } from 'lucide-react';
 import { Fragment, forwardRef, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -67,13 +67,23 @@ const Row = forwardRef<HTMLLIElement, Plugin & { index: number; start: number }>
                   variant="ghost"
                   size="icon"
                   onClick={() => {
+                    const abortController = new AbortController();
                     toast.promise(
                       addMutation.mutateAsync({
                         toolName: name,
-                        options: { cwd: project },
+                        options: { cwd: project, signal: abortController.signal },
                       }),
                       {
-                        loading: `Adding ${name}`,
+                        loading: (
+                          <div className="flex w-full items-center justify-between gap-2">
+                            <span>Adding {name}</span>
+                            <EasyTooltip tooltip="Abort">
+                              <Button variant="ghost" size="icon" onClick={() => abortController.abort()}>
+                                <XIcon />
+                              </Button>
+                            </EasyTooltip>
+                          </div>
+                        ),
                         success: `Done adding ${name}`,
                         error: `Failed to add ${name}`,
                       },
@@ -158,7 +168,7 @@ function Page() {
                 <Row
                   {...plugin}
                   index={virtualItem.index}
-                  key={virtualItem.key}
+                  key={`${virtualItem.key}-${plugin.name}`}
                   ref={virtualItem.measureElement}
                   start={virtualItem.start}
                 />

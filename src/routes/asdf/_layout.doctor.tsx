@@ -4,6 +4,7 @@ import { CheckIcon, RefreshCcwIcon, XIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { asdfProfileConfig, cli } from '~/api';
+import { EasyTooltip } from '~/components/easy-tooltip';
 import { LoaderIcon } from '~/components/LoaderIcon';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/shadcn/accordion';
 import { Button } from '~/shadcn/button';
@@ -16,20 +17,21 @@ function Page() {
   const asdfQuery = useQuery(cli.asdf.runtime.help());
   const gitQuery = useQuery(cli.git.help());
   const curlQuery = useQuery(cli.curl.help());
+  const pgrepQuery = useQuery(cli.pgrep.help());
 
   const downloadAsdfMutation = useMutation(cli.downloadAsdf());
   const addAsdfToProfileMutation = useMutation(cli.addAsdfToProfile());
 
   const installAsdf = useMutation({
-    mutationFn: async () => {
-      await downloadAsdfMutation.mutateAsync();
+    mutationFn: async ({ signal }: { signal?: AbortSignal }) => {
+      await downloadAsdfMutation.mutateAsync({ signal });
       await addAsdfToProfileMutation.mutateAsync();
     },
   });
 
-  const allInstalled = !gitQuery.isError && !curlQuery.isError && !asdfQuery.isError;
+  const allInstalled = !gitQuery.isError && !curlQuery.isError && !pgrepQuery.isError && !asdfQuery.isError;
 
-  const isFetching = asdfQuery.isFetching || gitQuery.isFetching || curlQuery.isFetching;
+  const isFetching = asdfQuery.isFetching || gitQuery.isFetching || curlQuery.isFetching || pgrepQuery.isFetching;
 
   return (
     <div className="mt-8 flex flex-col justify-center gap-4 p-4">
@@ -40,9 +42,12 @@ function Page() {
           variant="outline"
           size="icon"
           onMouseDown={() => {
-            void Promise.allSettled([asdfQuery.refetch(), gitQuery.refetch(), curlQuery.refetch()]).then(() =>
-              toast.success('Refreshed'),
-            );
+            void Promise.allSettled([
+              asdfQuery.refetch(),
+              gitQuery.refetch(),
+              curlQuery.refetch(),
+              pgrepQuery.refetch(),
+            ]).then(() => toast.success('Refreshed'));
           }}
         >
           {isFetching ? <LoaderIcon /> : <RefreshCcwIcon />}
@@ -122,6 +127,42 @@ function Page() {
               </div>
             </AccordionContent>
           </AccordionItem>
+          <AccordionItem value="pgrep">
+            <AccordionTrigger className="px-4">
+              <div className="flex gap-4">
+                {pgrepQuery.isError ? (
+                  <>
+                    <XIcon />
+                    <code>pgrep</code> is not installed
+                  </>
+                ) : (
+                  <>
+                    <CheckIcon />
+                    <code>pgrep</code> is installed
+                  </>
+                )}
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="ml-14">
+                {curlQuery.isError ? (
+                  <div className="flex flex-col items-start gap-4">
+                    <p>
+                      Install <code>pgrep</code> with your package manager
+                    </p>
+                    <p>
+                      macOS: <code>brew install coreutils proctools</code>
+                    </p>
+                    <p>
+                      Linux: <code>apt install procps</code>
+                    </p>
+                  </div>
+                ) : (
+                  <Button disabled>Installed</Button>
+                )}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
           <AccordionItem value="asdf">
             <AccordionTrigger className="px-4">
               <div className="flex gap-4">
@@ -160,8 +201,18 @@ function Page() {
                       disabled={installAsdf.isSuccess || gitQuery.isError || curlQuery.isError}
                       variant="outline"
                       onMouseDown={() => {
-                        toast.promise(installAsdf.mutateAsync(), {
-                          loading: 'Installing',
+                        const abortController = new AbortController();
+                        toast.promise(installAsdf.mutateAsync({ signal: abortController.signal }), {
+                          loading: (
+                            <div className="flex w-full items-center justify-between gap-2">
+                              <span>Installing</span>
+                              <EasyTooltip tooltip="Abort">
+                                <Button variant="ghost" size="icon" onClick={() => abortController.abort()}>
+                                  <XIcon />
+                                </Button>
+                              </EasyTooltip>
+                            </div>
+                          ),
                           success: 'Installed',
                           error: 'Failed to install',
                         });

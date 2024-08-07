@@ -72,6 +72,7 @@
           "caughtErrorsIgnorePattern": "^_"
         }
       ],
+      "@typescript-eslint/prefer-promise-reject-errors": "off",
       "@typescript-eslint/restrict-template-expressions": [
         "warn",
         {
@@ -123,6 +124,7 @@
     "@typescript-eslint/eslint-plugin": "^7.16.0",
     "@typescript-eslint/parser": "^7.16.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "ansi_up": "^6.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "eslint": "8",
