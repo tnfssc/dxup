@@ -481,10 +481,10 @@ export const cli = {
   pgrep: {
     help(options?: CommandOptions) {
       return queryOptions<string, CommandError>({
-        queryKey: ['procps', 'help', options].filter((v) => !!v),
+        queryKey: ['pgrep', 'help', options].filter((v) => !!v),
         queryFn: async ({ signal }) => {
           const args = ['--help'];
-          const command = new Command('procps', args, options);
+          const command = new Command('pgrep', args, options);
           const [stdout, stderr] = await executeCommand('procps --help', command, { signal });
           if (stderr) console.error(stderr);
           return stdout;
