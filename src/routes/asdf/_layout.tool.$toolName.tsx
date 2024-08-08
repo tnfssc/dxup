@@ -178,7 +178,7 @@ function Page() {
   return (
     <div className="flex h-screen flex-col">
       <div className="flex justify-center">
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center justify-between gap-2 p-4">
           <code>{tool}</code>
           <Input className="flex" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
           <div className="flex gap-2">
@@ -214,7 +214,6 @@ function Page() {
           </div>
         </div>
       </div>
-      {/* <Center flex="1" pos="relative"> */}
       <div className="relative flex flex-1 justify-center">
         <div className="absolute bottom-0 left-0 right-0 top-0 overflow-auto" ref={parentRef}>
           <ul

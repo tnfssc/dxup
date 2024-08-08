@@ -166,7 +166,7 @@ const Row: React.FC<Plugin & { index: number }> = ({ name }) => {
         }}
       >
         <div className="flex w-full justify-between">
-          <div className="flex flex-col items-start gap-2">
+          <div className="flex flex-row items-center gap-2">
             <code>{name}</code>
             {isProjectTool && <Badge variant="outline">Current project</Badge>}
           </div>
