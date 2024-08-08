@@ -34,7 +34,7 @@ function Page() {
   const isFetching = asdfQuery.isFetching || gitQuery.isFetching || curlQuery.isFetching || pgrepQuery.isFetching;
 
   return (
-    <div className="mt-8 flex flex-col justify-center gap-4 p-4">
+    <div className="mt-8 flex max-h-screen flex-col justify-center gap-4 overflow-auto p-4">
       <div className="flex w-full items-center justify-between px-4 py-4">
         <p>{isFetching ? 'Loading...' : allInstalled ? 'All good!' : 'Some things are not installed'}</p>
         <Button
